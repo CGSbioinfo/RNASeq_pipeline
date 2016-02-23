@@ -13,6 +13,7 @@
 # Running the pipeline
 
 Setting up the analysis
+-----------------------
 1.	Go to the main folder of the project and run:
     		$ analysis_info.py
 This will create a file named analysis_info.txt, which needs to be filled in a text editor.
@@ -21,6 +22,7 @@ This will create a file named analysis_info.txt, which needs to be filled in a t
     		$ organizeWorkingDirectory.py --analysis_info_file analysis_info.txt
 
 QC and trimming
+---------------
 Run the following commands:
   $ qcReads.py --in_dir rawReads/ --out_dir rawReads/
   $ fastqc_tables_all.py --in_dir rawReads/ --out_dir rawReads/  
@@ -28,10 +30,12 @@ Run the following commands:
   $ fastqc_tables_all.py --in_dir trimmedReads/ --out_dir trimmedReads/  
 
 Mapping and mapping QC
+----------------------
 Run the following commands:
   $ mappingReads.py --in_dir trimmedReads/ --out_dir alignedReads/
   $ mappingQC.py --in_dir alignedReads/ --out_dir alignedReads/QC/ --out_dir_plots Report/figure
 
 Counting Reads
+--------------
 Run the following commands:
   $ countingReads.py --in_dir alignedReads/ --out_dir alignedReads/ --mapping_summary_file mapping_summary.csv
