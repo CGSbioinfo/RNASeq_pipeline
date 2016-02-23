@@ -1,6 +1,21 @@
 
+Software and scripts required
+Make sure the following software is installed: FastQC, Trim Galore, STAR, HTSeq, 
+R, edgeR, RSeQC, Piccard Tools, samtools. 
+
+The python main script calls other scripts, make sure they are available from 
+the $PATH: functions.py, analysis_info.py, organizeWorkingDirectory.py, qcReads.py, 
+trimmingReads.py, fastqc_tables_all.py, mappingReads.py, mappingQC.py, mapping_summary.R, 
+mapping_distribution.R, junctionPlotAll.R, countingReads.py, countsLog_rnaseq.R.
+
+Note: some scripts are called from ~/bin, which means a copy should be stored there, (to-do: fix this):
+•	RSeQC scripts: junction_annotation.py, junction_saturation.py, gene body coverage.py
+•	junctionPlotAll.R
+
+##------------------------------------------------------------------------------##
 
 # Download and Install
+----------------------
  $ git clone https://github.com/CGSbioinfo/RNASeq_pipeline.git
 
  $ cd RNASeq_pipeline/scripts
