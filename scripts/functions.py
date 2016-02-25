@@ -70,7 +70,6 @@ def create_rawReads_folder(sampleNames):
     readsFiles = [folders[i] for i, x in enumerate(folders) if re.findall('rawReads',x)]
     allFiles = get_filepaths(reads_dir)
     allFiles= [allFiles[i] for i, x in enumerate(allFiles) if re.findall("_R\d.*.fastq", x)]
-    print readsFiles
     if not readsFiles:
         make_sure_path_exists('rawReads')
         sampleDir = []
