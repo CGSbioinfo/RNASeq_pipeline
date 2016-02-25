@@ -1,0 +1,9 @@
+Working directory = /mnt/cgs-fs3/Sequencing/Pipelines/RNASeq_pipeline/example/ 
+reads_dir = /mnt/cgs-fs3/Sequencing/Pipelines/RNASeq_pipeline/example/test_data/NextSeq 500 v2- RNA-Seq (8plex)-19407390 
+Reference Genome = /mnt/cgs-fs3/Sequencing/Genome/Human/dna/ensembl/grch38/release80/star 
+GTF File = /mnt/cgs-fs3/Sequencing/Genome/Human/gtf/ensembl/grch38/release-80/Homo_sapiens.GRCh38.80.gtf 
+BedFile = /mnt/cgs-fs3/Sequencing/Genome/Human/bed_grch38_hg38/genecode_grch38_hg38.bed
+BedFile10K = /mnt/cgs-fs3/Sequencing/Genome/Human/bed_grch38_hg38/genecode_grch38_hg38_10k.bed
+refFlat = /mnt/cgs-fs3/Sequencing/Genome/Human/refFlat_grchr38.80/refFlat.txt 
+rRNA_interval_list = /mnt/cgs-fs3/Sequencing/Genome/Human/rRNA_interval_list_grch38.80.gtf/hg38.rRNA.interval_list 
+strand = reverse 
