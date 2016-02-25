@@ -34,7 +34,7 @@ if __name__ == '__main__':
     args=parser.parse_args()
 
     params_file=args.analysis_info_file
-    path=organizeWorkingDirectory.read_parameters_file(params_file)['Working directory']
+    path=functions.read_parameters_file(params_file)['Working directory']
     os.chdir(path)
 
     # Read sample names text file
@@ -45,8 +45,7 @@ if __name__ == '__main__':
     out_dir=args.out_dir
 
     files=functions.get_filepaths(in_dir)
-    files = [files[y] for y, x in enumerate(files) if re.findall("fastqc_data.txt", x)]
-   
+    files = [files[y] for y, x in enumerate(files) if re.findall("fastqc_data.txt", x)] 
     Parallel(n_jobs=8)(delayed(tables)(i) for i in files)
 
 
