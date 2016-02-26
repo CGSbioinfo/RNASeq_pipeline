@@ -1,15 +1,18 @@
 #!/usr/local/bin/Rscript
 
-library(ggplot2)
-library(reshape)
-require(grid)
-library(xtable)
+suppressMessages(library(ggplot2))
+suppressMessages(library(reshape))
+suppressMessages(require(grid))
+suppressMessages(library(xtable))
 
 in_dir=commandArgs(TRUE)[1]
 sample_name=commandArgs(TRUE)[2]
 readType=commandArgs(TRUE)[3] # provide full path!!!
 outdir=commandArgs(TRUE)[4]
-#setwd(dir)
+suffix=commandArgs(TRUE)[5]
+if (is.na(suffix)){
+  suffix=''
+}
 
 files=list.files(path = in_dir, full.names = TRUE, recursive = TRUE)
 files=files[grep(sample_name,files)]
@@ -56,7 +59,7 @@ generate_qc_plot=function(files,sample_name,type){
         annotate("rect", xmin=-Inf, xmax=Inf, ymin=28, ymax=Inf, alpha=0.1, fill="green") + 
         xlab("Position of base in read")
     }
-    ggsave(filename=paste0(outdir,'/',sample_temp, '_per_base_sequence_qual.png'), plot=p)
+    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_per_base_sequence_qual.png'), plot=p)
   } else if (type=='per_base_sequence_content.txt'){
     colnames(dat_r1)=c('Base','%G','%A','%T','%C')
     dat_r1$Base <- factor(dat_r1$Base, as.character(dat_r1$Base))
@@ -80,7 +83,7 @@ generate_qc_plot=function(files,sample_name,type){
                                      legend.position="top", plot.title = element_text(lineheight=.8, face="bold", vjust=-1.5)) + 
         xlab("Position in read") +  ylim(0, 100) 
     }
-    ggsave(filename=paste0(outdir,'/',sample_temp, 'per_base_sequence_content.png'), plot=p)
+    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_per_base_sequence_content.png'), plot=p)
   } else if (type=='kmer_content.txt'){
     colnames(dat_r1)=c('Sequence','Content','PValue', 'Obs_Exp_Max', 'Max_Obs_Exp_Position' )
     nbases=76
@@ -131,7 +134,7 @@ generate_qc_plot=function(files,sample_name,type){
                                      plot.title = element_text(lineheight=.8, face="bold", vjust=-1.5))  + 
         xlab("Position in read")
     } 
-    ggsave(filename=paste0(outdir,'/',sample_temp, '_kmer_content.png'), plot=p)
+    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_kmer_content.png'), plot=p)
   }
 }
 
