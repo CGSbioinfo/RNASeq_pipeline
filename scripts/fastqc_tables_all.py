@@ -19,6 +19,10 @@ def tables(i):
     outdir = re.sub('fastqc_data.txt', '', i)
     os.system("fastqc_plot_data.py " + i + " all " + outdir)
 
+def plots(i):
+    outdir = re.sub('fastqc_data.txt', '', i)
+    os.system('Rscript /usr/local/bin/fastqc_plots_all.R ' + in_dir + ' ' + i + ' ' + readType + ' ' + out_dir_plots )
+
 
 ##############################################################
 
@@ -31,6 +35,8 @@ if __name__ == '__main__':
     parser.add_argument('--analysis_info_file', help='Text file with details of the analysis. Default=analysis_info.txt', default='analysis_info.txt')
     parser.add_argument('--in_dir', help='Path to folder containing fastq files. Default=rawReads/', default='rawReads')
     parser.add_argument('--out_dir', help='Path to out put folder. Default=rawReads/', default='rawReads')
+    parser.add_argument('--readType', help='Read Type: pairedEnd or singleEnd. Default=pairedEnd', default='pairedEnd')
+    parser.add_argument('--out_dir_plots', help='Path to out put folder. Default=Report/figure', default='Report/figure')
     args=parser.parse_args()
 
     params_file=args.analysis_info_file
@@ -43,10 +49,17 @@ if __name__ == '__main__':
     # Set input and output directories if not 'rawReads/'
     in_dir=args.in_dir
     out_dir=args.out_dir
+    out_dir_plots=args.out_dir_plots
+    readType=args.readType
 
     files=functions.get_filepaths(in_dir)
     files = [files[y] for y, x in enumerate(files) if re.findall("fastqc_data.txt", x)] 
     Parallel(n_jobs=8)(delayed(tables)(i) for i in files)
+    
+    functions.make_sure_path_exists(out_dir_plots)
+    Parallel(n_jobs=8)(delayed(plots)(i) for i in sampleNames)
+
+    
 
 
 #os.system('ls rawReads/*/*fastqc  |  grep -v trimmed  | grep ":"  | sed \'s/://g\' > sample_names2.txt')
