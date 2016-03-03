@@ -23,6 +23,7 @@ cdna: /mnt/cgs-fs3/Sequencing/Genome/Human/cdna/ensembl/grch38/release-80/Homo_s
 //------------------------------------------//
 
 /mnt/cgs-fs3/Sequencing/Genome/Human/gtf/ensembl/grch38/release-83/bedfile/Homo_sapiens.GRCh38.83.bed
+/mnt/cgs-fs3/Sequencing/Genome/Human/gtf/ensembl/grch38/release-83/bedfile/Homo_sapiens.GRCh38.83.10K.bed
 /mnt/cgs-fs3/Sequencing/Genome/Human/gtf/ensembl/grch38/release-83/refFlat/Homo_sapiens.GRCh38.83.refFlat.txt
 
 
@@ -34,11 +35,10 @@ https://genome.ucsc.edu/cgi-bin/hgTables?hgsid=433745297_sR8Zi11ccmVx8TRCOqkwCoL
 00-133280861&hgta_outputType=gff&hgta_outFileName=genecode_grch38_hg38.gtf
 
 Now we use bedops to convert from gtf to bedfile
+  $ gtf2bed < gtf > bed
 
 It should be stored in the gtf/version/release/bedfile folder
 Keep version and release in the name of the bedFile
-
-
 
 
 BEDFILE 10K
