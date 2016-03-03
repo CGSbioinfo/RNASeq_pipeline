@@ -22,11 +22,12 @@ cdna: /mnt/cgs-fs3/Sequencing/Genome/Human/cdna/ensembl/grch38/release-80/Homo_s
   Other reference files used in the analysis:
 //------------------------------------------//
 
+/mnt/cgs-fs3/Sequencing/Genome/Human/gtf/ensembl/grch38/release-83/bedfile/Homo_sapiens.GRCh38.83.bed
+/mnt/cgs-fs3/Sequencing/Genome/Human/gtf/ensembl/grch38/release-83/refFlat/Homo_sapiens.GRCh38.83.refFlat.txt
 
 
 BEDFILE
 --------
-
 Bed files use to be downloaded from genecode:
 https://genome.ucsc.edu/cgi-bin/hgTables?hgsid=433745297_sR8Zi11ccmVx8TRCOqkwCoLJaGEX&clade=mammal&org=Human&db
 =hg38&hgta_group=genes&hgta_track=knownGene&hgta_table=knownGene&hgta_regionType=genome&position=chr9%3A1332520
@@ -37,17 +38,18 @@ Now we use bedops to convert from gtf to bedfile
 It should be stored in the gtf/version/release/bedfile folder
 Keep version and release in the name of the bedFile
 
+
+
+
 BEDFILE 10K
 -----------
 We create a random sample of 10000 gene to do some QC.
-We do this in R:
-> 
+  $ shuf -n 10000 Homo_sapiens.GRCh38.83.bed > Homo_sapiens.GRCh38.83.10K.bed
 
 
 REFLAT 
 ------
-
-We use gtfToGenePred utility from UCSC. Download from: hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/gtfToGenePred
+We used gtfToGenePred utility from UCSC. Download from: hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/gtfToGenePred
 commands: 
   $ gtfToGenePred -genePredExt gtfFile refFlat.tmp.txt
   $ paste <(cut -f 12 refFlat.tmp.txt) <(cut -f 1-10 refFlat.tmp.txt) > refFlat.txt
