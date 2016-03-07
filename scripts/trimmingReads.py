@@ -19,11 +19,11 @@ def trimming(i):
     allFiles = os.listdir(in_dir + "/" + i )
     pairedReads_temp = [allFiles[y] for y, x in enumerate(allFiles) if re.findall("_R2", x)]
     if pairedReads_temp:
-        os.system("trim_galore --paired --fastqc --fastqc_args '--nogroup --extract' --output_dir " + out_dir + " " + 
+        os.system("trim_galore --gzip --paired --fastqc --fastqc_args '--nogroup --extract' --output_dir " + out_dir + " " + 
             in_dir + i + "/" + i + "*_R1*.fastq" + gz + " " + 
             in_dir + i + "/" + i + "*_R2*.fastq" + gz)
     else:
-        os.system("trim_galore --fastqc --fastqc_args '--nogroup --extract' --output_dir " + out_dir + " " + in_dir + i + "/" + i + "*_R1*.fastq" + gz)
+        os.system("trim_galore --gzip --fastqc --fastqc_args '--nogroup --extract' --output_dir " + out_dir + " " + in_dir + i + "/" + i + "*_R1*.fastq" + gz)
 
 
 #########################

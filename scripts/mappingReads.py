@@ -68,7 +68,7 @@ if __name__ == '__main__':
     # Detect if files are gz
     gz = functions.check_gz(in_dir)
 
-    Parallel(n_jobs=7)(delayed(mapping)(i) for i in sampleNames)
+    Parallel(n_jobs=2)(delayed(mapping)(i) for i in sampleNames)
     Parallel(n_jobs=7)(delayed(indexing)(i) for i in sampleNames)
     Parallel(n_jobs=8)(delayed(sortByName)(i) for i in sampleNames)
 

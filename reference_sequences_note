@@ -27,6 +27,7 @@ cdna: /mnt/cgs-fs3/Sequencing/Genome/Human/cdna/ensembl/grch38/release-80/Homo_s
 /mnt/cgs-fs3/Sequencing/Genome/Human/gtf/ensembl/grch38/release-83/refFlat/Homo_sapiens.GRCh38.83.refFlat.txt
 
 
+
 BEDFILE
 --------
 Bed files use to be downloaded from genecode:
@@ -41,10 +42,12 @@ It should be stored in the gtf/version/release/bedfile folder
 Keep version and release in the name of the bedFile
 
 
+
 BEDFILE 10K
 -----------
 We create a random sample of 10000 gene to do some QC.
   $ shuf -n 10000 Homo_sapiens.GRCh38.83.bed > Homo_sapiens.GRCh38.83.10K.bed
+
 
 
 REFLAT 
@@ -57,4 +60,70 @@ commands:
 It should be stored in the gtf/version/release/refFlat folder
 Keep version and release in the name of the refFlat
 
+
+
+rRNA Interval list
+------------------
+We obtained the rRNA from the bedfile
+  $ awk '{if($8=="gene"){print $0}}' Homo_sapiens.GRCh38.83.bed | awk '{if($19=="\"rRNA\";"){print $0}}' > Homo_sapiens.GRCh38.83.rRNA.bed
+
+We downloaded a script to create interval list from https://gist.github.com/adomingues/57e3c2f9f4aca8dfde7 and run:
+  $ createRNAInterval_list.sh hg38 rRNA_genes.bed
+
+Create an interval header and cat it: 
+  $ samtools view -H bamfile |  grep '@' > interval_header
+  $ cat interval_header hg38.rRNA.interval_list > hg38.rRNA.interval_list2 && mv hg38.rRNA.interval_list2 hg38.rRNA.interval_list
+
+
+
+//------------------------------------------//
+  GTF Files
+//------------------------------------------//
+
+The current GTF file contains the next features:
+
+     29 "3prime_overlapping_ncrna";
+   5560 "antisense";
+      3 "bidirectional_promoter_lncrna";
+     14 "IG_C_gene";
+      9 "IG_C_pseudogene";
+     37 "IG_D_gene";
+     18 "IG_J_gene";
+      3 "IG_J_pseudogene";
+    145 "IG_V_gene";
+    183 "IG_V_pseudogene";
+   7668 "lincRNA";
+      1 "macro_lncRNA";
+   4198 "miRNA";
+   2306 "misc_RNA";
+      2 "Mt_rRNA";
+     22 "Mt_tRNA";
+      3 "non_coding";
+     58 "polymorphic_pseudogene";
+  10278 "processed_pseudogene";
+    501 "processed_transcript";
+  19826 "protein_coding";
+     25 "pseudogene";
+      8 "ribozyme";
+    549 "rRNA";
+     49 "scaRNA";
+    918 "sense_intronic";
+    193 "sense_overlapping";
+    949 "snoRNA";
+   1905 "snRNA";
+     20 "sRNA";
+   1053 "TEC";
+    445 "transcribed_processed_pseudogene";
+      3 "transcribed_unitary_pseudogene";
+    680 "transcribed_unprocessed_pseudogene";
+      1 "translated_unprocessed_pseudogene";
+      6 "TR_C_gene";
+      4 "TR_D_gene";
+     79 "TR_J_gene";
+      4 "TR_J_pseudogene";
+    108 "TR_V_gene";
+     30 "TR_V_pseudogene";
+    171 "unitary_pseudogene";
+   2610 "unprocessed_pseudogene";
+      1 "vaultRNA";
 
