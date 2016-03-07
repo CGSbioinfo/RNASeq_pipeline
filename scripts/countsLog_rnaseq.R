@@ -8,63 +8,78 @@ suppressMessages(library(reshape))
 suppressMessages(library(GenomicRanges))
 suppressMessages(library(rtracklayer))
 suppressMessages(library(Rsamtools))
-require(grid)
+suppressMessages(require(grid))
 
 outdir = commandArgs(TRUE)[1]
 mapping_sum = commandArgs(TRUE)[2]
 
-##########################
-# HTSEQ COUNT OUTPUT
-##########################
+###############################
+# Reading counted reads files #
+###############################
 
-setwd(outdir)
-files=list.files()
-files=files[grep(pattern = "_count.txt",files)]
+#setwd(outdir)
+files=list.files(outdir, pattern = "_count.txt", full.names=TRUE)
 
 data=read.table(files[1], row.names=1)
 colnames(data)=files[1]
 
 for (i in 2:length(files)){
   name=files[i]
-  name2=gsub("-","_",name)
-  name2=strsplit(name2,"_\\.")[[1]][1]
   assign(name, read.table(name))
   sample=eval(as.name(name))
   index=match(rownames(data), sample[,1])
   data=cbind(data, sample[index,2])
   colnames(data)[i]=name
 }
-
-data.notcounted=data[which(rownames(data)=='__no_feature'):dim(data)[1],]
-colnames(data.notcounted)=gsub('_count.txt','',colnames(data.notcounted))
-
-data=data[-c(which(rownames(data)=='__no_feature'):dim(data)[1]),]
 colnames(data)=gsub('_count.txt','',colnames(data))
+colnames(data)=gsub('.*/','',colnames(data))
+total_counts=colSums(data)
 
+# Excluding reads not falling in features, ambiguous, too low qual, multiple locations
+data.notcounted=data[which(rownames(data)=='__no_feature'):dim(data)[1],]
 
-# Distribution of counts
+# Subsetting including reads
+data=data[-c(which(rownames(data)=='__no_feature'):dim(data)[1]),]
+total.data.counted=colSums(data)
+
+head(data)
+# ***************************************************************************************#
+# Distribution of counts: From the uniquely mapped reads, we get how many of these were in features, not in feature, ambiguous, and too low quality
 n_reads_in_genes=colSums(data)
+n_reads_no_feature=t(data.notcounted["__no_feature",])[,1]
+n_reads_ambiguous=t(data.notcounted["__ambiguous",])[,1]
+n_reads_lowqual=t(data.notcounted["__too_low_aQual",])[,1]
 
+# Using the mapping summary, we get the uniquely mapped reads
 n_reads_total=read.csv(mapping_sum,row.names=1)
 sample_names=rownames(n_reads_total)
 n_reads_total=n_reads_total$Mapped_num
 names(n_reads_total)=sample_names
 
-n_reads_no_feature=t(data.notcounted["__no_feature",])[,1]
-n_reads_ambiguous=t(data.notcounted["__ambiguous",])[,1]
+# Bind matriz
+counting_summ=cbind(n_reads_total, n_reads_in_genes[sample_names], n_reads_no_feature[sample_names], n_reads_ambiguous[sample_names], n_reads_lowqual[sample_names])
+colnames(counting_summ)=c('Uniquely_mapped','In_features', 'Not_in_features', 'Ambiguous', 'Low_aQual')
+write.csv(counting_summ, paste0(outdir,'/counts_in_features.csv'))
 
-counting_summ=cbind(n_reads_total, n_reads_in_genes[sample_names], n_reads_no_feature[sample_names], n_reads_ambiguous[sample_names])
-colnames(counting_summ)=c('Total','In_genes', 'Not_in_genes', 'Ambiguous')
+# Plot
+table=t(t(counting_summ[,-1]/counting_summ[,1]*100))
+data.melt=melt(table)
+pdf(paste0(outdir,"/counts_in_features.pdf"))
+ggplot(data.melt, aes(x=X1, y=value, fill=X2, group=X2 )) + geom_bar(stat='identity') + 
+       theme(axis.text.x=element_text(angle=90, hjust=1)) + labs(fill="") + xlab('Sample') + ylab('Percentage')
+dev.off()
 
 # Numbers of genes detected
 n_genes=sapply(data,function(x){table(x==0)['FALSE']})
 names(n_genes)=gsub('.FALSE','',names(n_genes))
-counting_summ=cbind(counting_summ,Num_genes=n_genes)
-write.csv(counting_summ, 'counts_summary.csv')
+counting_summ=cbind(N_features=n_genes)
+write.csv(counting_summ, paste0(outdir,'/Number_of_features_detected.csv'))
 
-# Plot
+
+# ************************************************ #
+# Distribution of counts 
 data.melt=suppressMessages(melt(data))
-pdf("countsDistributionHist.pdf", width=12, height=7)
+pdf(paste0(outdir,"/countsDistributionHist.pdf"), width=12, height=7)
 colnames(data.melt)[1]='Sample'
 ggplot(data.melt, aes(x=log(value), fill=Sample )) + stat_bin(biwidth=1) + theme(legend.text=element_text(size=10), legend.key.size = unit(.45, "cm"))
 suppressMessages(dev.off())
@@ -97,7 +112,7 @@ for (i in 1:length(colnames(data))) {
 distribution=distribution/colSums(distribution)*100
 distribution.melt=melt(cbind(bins=factor(row.names(distribution), levels=row.names(distribution)), distribution))
 
-pdf('countDistribution_lines.pdf', width=12)
+pdf(paste0(outdir,'/countDistribution_lines.pdf'), width=12)
 ggplot(distribution.melt,aes(x=bins,y=value,color=variable,group=variable)) + geom_path() + 
   xlab('Number of counts') + ylab('Percentage of genes') + 
   scale_y_continuous(breaks=seq(0,70,10), labels=c('0%','10%','20%','30%','40%','50%','60%','70%')) + 
@@ -134,7 +149,7 @@ for (i in 1:length(colnames(data_filtered))) {
 distribution=distribution/colSums(distribution)*100
 distribution.melt=melt(cbind(bins=factor(row.names(distribution), levels=row.names(distribution)), distribution))
 
-pdf('countDistribution_lines_nozeros.pdf', width=12)
+pdf(paste0(outdir,'/countDistribution_lines_nozeros.pdf'), width=12)
 ggplot(distribution.melt,aes(x=bins,y=value,color=variable,group=variable)) + geom_path() + 
   xlab('Number of counts') + ylab('Percentage of genes') + 
   scale_y_continuous(breaks=seq(0,70,10), labels=c('0%','10%','20%','30%','40%','50%','60%','70%')) + 
@@ -145,7 +160,7 @@ dev.off()
 
 ### heatmap correlation samples based on count profile
 data_norm=t(t(data)/rowSums(t(data)))
-pdf('sample_counts_correlation_heatmap.pdf')
+pdf(paste0(outdir,'/sample_counts_correlation_heatmap.pdf'))
 heatmap.2(cor(data_norm), scale=c('none'), margins=c(10,10),density.info='density', trace='none')
 dev.off()
 
