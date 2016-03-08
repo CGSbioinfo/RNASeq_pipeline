@@ -38,10 +38,17 @@ We normally have protocols corresponding to -s reverse
 
 
 
-What to do
-----------
+How to fill the analysis_info
+-----------------------------
 
-Chose the parameter that corresponds to your protocol. For example:
-SECOND_READ_TRANSCRIPTION_STRAND and reverse, which mean the same.
-Putting either on the analysis_info.txt will work.
+In the general case, we find this match:
+
+             Piccard               | HTSeq
+-------------------------------------------
+NONE				   | no
+FIRST_READ_TRANSCRIPTION_STRAND	   | yes
+SECOND_READ_TRANSCRIPTION_STRAND   | reverse
+ 
+Chossing the corresponding to your protocol and chossing either the piccard convention
+or the HTSeq convention will work.
 

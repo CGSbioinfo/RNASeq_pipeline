@@ -32,7 +32,7 @@ def piccard_collect_metrics(i):
     os.system("java -jar ~/tools/picard-tools-1.127/picard.jar CollectRnaSeqMetrics " + 
         " REF_FLAT=" + refFlat + 
         " RIBOSOMAL_INTERVALS=" + rRNA_interval_list + 
-        " STRAND_SPECIFICITY=" + strand + 
+        " STRAND_SPECIFICITY=" + strand_piccard + 
         " INPUT=" + in_dir + "/" + bamfiles +  
         " OUTPUT=" + out_dir + "/" + i + "_metrics.txt")
 
@@ -61,9 +61,10 @@ if __name__ == '__main__':
     refFlat=functions.read_parameters_file(params_file)['refFlat']
     rRNA_interval_list=functions.read_parameters_file(params_file)['rRNA_interval_list']
     strand=functions.read_parameters_file(params_file)['strand']
-    if strand == 'reverse':
-        strand = 'SECOND_READ_TRANSCRIPTION_STRAND'
-    os.chdir(path)
+    strand_piccard, strand_htseq = functions.get_strand(strand)
+    #if strand == 'reverse':
+    #    strand = 'SECOND_READ_TRANSCRIPTION_STRAND'
+    #os.chdir(path)
 
     # Read sample names text file
     sampleNames = functions.read_sample_names()
@@ -75,7 +76,7 @@ if __name__ == '__main__':
     out_dir_plots=args.out_dir_plots
     functions.make_sure_path_exists(out_dir_plots)
 
-   # Detect if files are gz
+    # Detect if files are gz
     gz = functions.check_gz(in_dir)
 
     os.system("mapping_summary.R " + in_dir + '/')
@@ -95,5 +96,4 @@ if __name__ == '__main__':
     # Piccard tools
     Parallel(n_jobs=8)(delayed(piccard_collect_metrics)(i) for i in sampleNames)
     Parallel(n_jobs=7)(delayed(pct)(i) for i in sampleNames)
-
 

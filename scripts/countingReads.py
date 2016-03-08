@@ -16,7 +16,7 @@ import functions
 import argparse
 
 def counting(i):
-    os.system('samtools view ' + in_dir + '/' + i + 'Aligned.sortedByCoord.sortedByName.out.bam | htseq-count -a 10 -m union -s ' + strand + ' - ' + gtfFile + ' > ' + out_dir + '/' + i + '_count.txt')
+    os.system('samtools view ' + in_dir + '/' + i + 'Aligned.sortedByCoord.sortedByName.out.bam | htseq-count -a 10 -m union -s ' + strand_htseq + ' - ' + gtfFile + ' > ' + out_dir + '/' + i + '_count.txt')
 
 
 #########################
@@ -36,6 +36,7 @@ if __name__ == '__main__':
     path=functions.read_parameters_file(params_file)['Working directory']
     refGenome=functions.read_parameters_file(params_file)['Reference Genome']
     strand=functions.read_parameters_file(params_file)['strand']
+    strand_piccard, strand_htseq = functions.get_strand(strand)
     gtfFile=functions.read_parameters_file(params_file)['GTF File']
 
     os.chdir(path)

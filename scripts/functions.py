@@ -99,4 +99,21 @@ def check_gz(dir):
         gz =""
     return(gz)
 
-
+def get_strand(strand):
+    if strand == 'NONE' or strand == 'FIRST_READ_TRANSCRIPTION_STRAND' or strand == 'SECOND_READ_TRANSCRIPTION_STRAND':
+        strand_piccard = strand
+        if strand_piccard == 'NONE':
+            strand_htseq = 'no'
+        elif strand_piccard == 'FIRST_READ_TRANSCRIPTION_STRAND':
+            strand_htseq = 'yes'
+        elif strand_piccard == 'SECOND_READ_TRANSCRIPTION_STRAND':
+            strand_htseq = 'reverse'
+    elif strand == 'no' or strand == 'yes' or strand == 'reverse':
+        strand_htseq = strand
+        if strand_htseq == 'no':
+            strand_piccard = 'NONE'
+        elif strand_htseq == 'yes':
+            strand_piccard = 'FIRST_READ_TRANSCRIPTION_STRAND'
+        elif strand_htseq == 'reverse':
+            strand_piccard = 'SECOND_READ_TRANSCRIPTION_STRAND'
+    return([strand_piccard, strand_htseq])
