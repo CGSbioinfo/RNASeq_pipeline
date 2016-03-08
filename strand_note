@@ -1,0 +1,37 @@
+
+# ----------------------------------------------------- #
+# How to fill the strand field in the analysis_info.txt #
+# ----------------------------------------------------- #
+
+A couple of software in the analysis require to specify the strand from which the reads are expected to come from. This information has to be filled in the analysis_info.txt
+
+
+Piccard Tools CollectRnaSeqMetrics
+----------------------------------
+
+One of them is Piccard Tools' CollectRnaSeqMetrics, used in the mappingQC.py script. The details are: 
+
+Option: STRAND_SPECIFICITY (StrandSpecificity)
+Description: For strand-specific library prep. For unpaired reads, use FIRST_READ_TRANSCRIPTION_STRAND if the reads are expected to be on the transcription strand. Required. Possible values: {NONE, FIRST_READ_TRANSCRIPTION_STRAND, SECOND_READ_TRANSCRIPTION_STRAND}. 
+
+We normally have protocols corresponding to SECOND_READ_TRANSCRIPTION_STRAND.
+
+
+HTSeq
+-----
+
+HTSeq uses a different term for the same concept:
+Option: -s <yes/no/reverse>
+Descrition: whether the data is from a strand-specific assay (default: yes). For stranded=no, a read is considered overlapping with a feature regardless of whether it is mapped to the same or the opposite strand as the feature. For stranded=yes and single-end reads, the read has to be mapped to the same strand as the feature. For paired-end reads, the first read has to be on the same strand and the second read on the opposite strand. For stranded=reverse, these rules are reversed.
+
+We normally have protocols corresponding to -s reverse
+
+
+
+What to do
+----------
+
+Chose the parameter that corresponds to your protocol. For example:
+SECOND_READ_TRANSCRIPTION_STRAND and reverse, which mean the same.
+Putting either on the analysis_info.txt will work.
+
