@@ -21,7 +21,8 @@ def tables(i):
 
 def plots(i):
     outdir = re.sub('fastqc_data.txt', '', i)
-    os.system('Rscript /usr/local/bin/fastqc_plots_all.R ' + in_dir + ' ' + i + ' ' + readType + ' ' + out_dir_plots + ' ' + suffix_name  )
+    os.system('Rscript /usr/local/bin/fastqc_plots_all.R ' + in_dir + ' ' + i + ' ' + readType + ' ' + 
+        out_dir_plots + ' ' + suffix_name  )
 
 
 ##############################################################
@@ -56,7 +57,7 @@ if __name__ == '__main__':
     
     files=functions.get_filepaths(in_dir)
     files = [files[y] for y, x in enumerate(files) if re.findall("fastqc_data.txt", x)] 
-    #Parallel(n_jobs=8)(delayed(tables)(i) for i in files)
+    Parallel(n_jobs=8)(delayed(tables)(i) for i in files)
     
     functions.make_sure_path_exists(out_dir_plots)
     Parallel(n_jobs=8)(delayed(plots)(i) for i in sampleNames)
