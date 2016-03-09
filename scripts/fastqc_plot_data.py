@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 import sys
 
 # USAGE: python fastq_data.txt per_base_sequence_content.py
