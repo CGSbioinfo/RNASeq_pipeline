@@ -19,8 +19,8 @@ Note: some scripts are called from ~/bin, which means a copy should be stored th
  $ git clone https://github.com/CGSbioinfo/RNASeq_pipeline.git
 
  $ cd RNASeq_pipeline/scripts
- $ for i in $(ls *py); do cp $i /usr/local/bin; done # NEED SUDO!!
- $ for i in $(ls *py); do chmod 777 /usr/local/bin/$i ; done # NEED SUDO!
+ $ for i in $(ls *); do cp $i /usr/local/bin; done # NEED SUDO!!
+ $ for i in $(ls *); do chmod 777 /usr/local/bin/$i; done # NEED SUDO!
  $ cp junctionPlotAll.R ~/bin 
 
 ##------------------------------------------------------------------------------##
