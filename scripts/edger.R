@@ -10,11 +10,10 @@ indir = commandArgs(TRUE)[1]
 outdir = commandArgs(TRUE)[2]
 sample_info = commandArgs(TRUE)[3]
 comparisons = commandArgs(TRUE)[4]
-filtering_info = commandArgs(TRUE)[5]
-min.count = as.numeric(commandArgs(TRUE)[6]) # filtering: minimun number of reads a gene should have to be considered as expressed
-min.nsamples = as.numeric(commandArgs(TRUE)[7]) # filtering: minimum number of samples having a gene expressed
-design = commandArgs(TRUE)[8]
-gtf.file= commandArgs(TRUE)[9]
+min.count = as.numeric(commandArgs(TRUE)[5]) # filtering: minimun number of reads a gene should have to be considered as expressed
+min.nsamples = as.numeric(commandArgs(TRUE)[6]) # filtering: minimum number of samples having a gene expressed
+design = commandArgs(TRUE)[7]
+gtf.file= commandArgs(TRUE)[8]
 
 dir.create(outdir, showWarnings = FALSE)
 
@@ -127,6 +126,5 @@ if (design=='pairedSamples'){
 } else if(design=='non-pairedSamples'){
   pairedDesign=FALSE
 }
-print(pairedDesign)
 
 multipleComparison(dge,comparisons,pairedDesign, min.count, min.nsamples, gtf.file)
