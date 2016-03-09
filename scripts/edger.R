@@ -57,9 +57,6 @@ group <- c(as.character(sample_info$Group))
 #---------------------------------------------------#
 data=data[,match(as.character(sample_info$SampleID),colnames(data))]
 
-print(head(data))
-print(sample_info)
-q()
 
 # Creating a DGE object to analyse data with edgeR #
 #--------------------------------------------------#
@@ -132,4 +129,4 @@ if (design=='pairedSamples'){
 }
 
 
-
+multipleComparison(dge,comparisons,pairedDesign, min.count, min.nsamples, gtf.file)
