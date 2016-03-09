@@ -55,7 +55,7 @@ if __name__ == '__main__':
     gz = functions.check_gz(in_dir)
 
 
-    Parallel(n_jobs=7)(delayed(counting)(i) for i in sampleNames)
+    #Parallel(n_jobs=7)(delayed(counting)(i) for i in sampleNames)
     os.system("Rscript /usr/local/bin/countsLog_rnaseq.R " + out_dir + ' ' + mapping_summary_file)
 
 
