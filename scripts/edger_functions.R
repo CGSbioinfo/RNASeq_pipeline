@@ -10,7 +10,7 @@ multipleComparison=function(dge,comparison,design, min.count, min.nsamples, gtf.
   significant05=c()
   
   # Get annotation
-  GTF <- import.gff(gtf.file, format="gtf", asRangedData=F, feature.type="gene")
+  GTF <- import.gff(gtf.file, format="gtf", feature.type="gene")
   df=GTF$gene_name
   names(df)=GTF$gene_id
   
@@ -30,7 +30,7 @@ multipleComparison=function(dge,comparison,design, min.count, min.nsamples, gtf.
     # Calculating the filtering threshold #
     #-------------------------------------#
     smallest_lib=min(dge$samples$lib.size)
-    smallest_lib_pm=smalles_lib/1000000
+    smallest_lib_pm=smallest_lib/1000000
     min.cpm=min.count/smallest_lib_pm
     
     # Filtering dge #
@@ -62,7 +62,7 @@ multipleComparison=function(dge,comparison,design, min.count, min.nsamples, gtf.
     
     # scatter plot
     y = cpm(dge,prior.count = 1, log=TRUE)
-    png(paste0('differentialExpression/',newd,'/ScatterPlot_', newd, ".png"), width = 1360, height = 1360)
+    png(paste0(outdir,'/',newd,'/ScatterPlot_', newd, ".png"), width = 1360, height = 1360)
     pairs.panels(y, smooth=FALSE)
     dev.off()
     

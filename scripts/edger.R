@@ -11,8 +11,8 @@ outdir = commandArgs(TRUE)[2]
 sample_info = commandArgs(TRUE)[3]
 comparisons = commandArgs(TRUE)[4]
 filtering_info = commandArgs(TRUE)[5]
-min.count = commandArgs(TRUE)[6] # filtering: minimun number of reads a gene should have to be considered as expressed
-min.nsamples = commandArgs(TRUE)[7] # filtering: minimum number of samples having a gene expressed
+min.count = as.numeric(commandArgs(TRUE)[6]) # filtering: minimun number of reads a gene should have to be considered as expressed
+min.nsamples = as.numeric(commandArgs(TRUE)[7]) # filtering: minimum number of samples having a gene expressed
 design = commandArgs(TRUE)[8]
 gtf.file= commandArgs(TRUE)[9]
 
@@ -78,7 +78,7 @@ dev.off()
 # Calculating the filtering threshold #
 #-------------------------------------#
 smallest_lib=min(dge$samples$lib.size)
-smallest_lib_pm=smalles_lib/1000000
+smallest_lib_pm=smallest_lib/1000000
 min.cpm=min.count/smallest_lib_pm
 
 
@@ -127,6 +127,6 @@ if (design=='pairedSamples'){
 } else if(design=='non-pairedSamples'){
   pairedDesign=FALSE
 }
-
+print(pairedDesign)
 
 multipleComparison(dge,comparisons,pairedDesign, min.count, min.nsamples, gtf.file)
