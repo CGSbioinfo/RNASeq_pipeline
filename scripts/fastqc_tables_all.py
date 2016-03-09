@@ -62,7 +62,7 @@ if __name__ == '__main__':
     functions.make_sure_path_exists(out_dir_plots)
     Parallel(n_jobs=8)(delayed(plots)(i) for i in sampleNames)
 
-    
+    os.system('Rscript /usr/local/bin/fastqc_plots_all_part2.R ' + in_dir + ' ' + 'sample_names.txt' + ' ' + readType + ' ' + out_dir_plots + ' ' + suffix_name  )
 
 
 #os.system('ls rawReads/*/*fastqc  |  grep -v trimmed  | grep ":"  | sed \'s/://g\' > sample_names2.txt')
