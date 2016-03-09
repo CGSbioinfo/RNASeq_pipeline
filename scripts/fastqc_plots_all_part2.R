@@ -28,7 +28,7 @@ for (i in 1:length(sample_names)){
   x=x[grep('_R1_',x)]
   x=read.table(x, stringsAsFactors = FALSE)
   colnames(x)=c('x','y')
-  x$Sample=paste0(sample_names[i],'_R1')
+  x$Sample=sample_names[i]
   mr1=rbind(mr1,x)
 }
 mr1=mr1[-1,]
@@ -42,7 +42,7 @@ if (readType=='pairedEnd') {
     y=y[grep('_R2_',y)]
     y=read.table(y, stringsAsFactors = FALSE)
     colnames(y)=c('x','y')
-    y$Sample=paste0(sample_names[i],'_R2')
+    y$Sample=sample_names[i]
     mr2=rbind(mr2,y)
   }
   mr2=mr2[-1,]
@@ -61,7 +61,7 @@ if (readType=='pairedEnd') {
            legend.key.height=unit(.4,"line"), axis.title.y=element_blank()) + ylab("") 
 }
 
-ggsave(filename=paste0(outdir,'/per_sequence_quality_scores', suffix, '.png'), plot=p)
+ggsave(filename=paste0(outdir,'/per_sequence_quality_scores', suffix, '.png'), width=10, height=5, units='in', plot=p)
 
 
 # Per sequence gc content
@@ -101,7 +101,7 @@ if (readType=='pairedEnd') {
   d=mr1
   p=ggplot(d, aes(x = x, y = y, group=Sample, colour=Sample)) + geom_line() + facet_wrap(~Read)
 }
-ggsave(filename=paste0(outdir,'/per_sequence_gc_content', suffix, '.png'), plot=p)
+ggsave(filename=paste0(outdir,'/per_sequence_gc_content', suffix, '.png'), width=10, height=5, units='in', plot=p)
 
 
 # Per sequence length distribution
@@ -144,7 +144,7 @@ if (readType=='pairedEnd') {
     theme( axis.title.x =element_text(size=12), axis.title.y =element_text(size=12), 
            axis.text.x=element_text(size=7,angle=90), axis.text.y=element_text(size=12))  + ylab("") 
 }
-ggsave(filename=paste0(outdir,'/sequence_length_distribution', suffix, '.png'), plot=p)
+ggsave(filename=paste0(outdir,'/sequence_length_distribution', suffix, '.png'), width=10, height=5, units='in', plot=p)
 
 
 # Per duplication levels
@@ -191,5 +191,5 @@ if (readType=='pairedEnd') {
     theme(axis.text.x = element_text(size = 8, angle=90), 
           axis.title.y=element_blank())  + xlab("Position in read")  
 }
-ggsave(filename=paste0(outdir,'/sequence_dup_levels', suffix, '.png'), plot=p)
+ggsave(filename=paste0(outdir,'/sequence_dup_levels', suffix, '.png'), width=10, height=5, units='in', plot=p)
 
