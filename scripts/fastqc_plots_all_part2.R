@@ -61,7 +61,7 @@ if (readType=='pairedEnd') {
            legend.key.height=unit(.4,"line"), axis.title.y=element_blank()) + ylab("") 
 }
 
-ggsave(filename=paste0(outdir,'/per_sequence_quality_scores', suffix, '.png'), width=10, height=5, units='in', plot=p)
+ggsave(filename=paste0(outdir,'/per_sequence_quality_scores', suffix, '.pdf'), width=10, height=5, units='in', plot=p)
 
 
 # Per sequence gc content
@@ -101,7 +101,7 @@ if (readType=='pairedEnd') {
   d=mr1
   p=ggplot(d, aes(x = x, y = y, group=Sample, colour=Sample)) + geom_line() + facet_wrap(~Read)
 }
-ggsave(filename=paste0(outdir,'/per_sequence_gc_content', suffix, '.png'), width=10, height=5, units='in', plot=p)
+ggsave(filename=paste0(outdir,'/per_sequence_gc_content', suffix, '.pdf'), width=10, height=5, units='in', plot=p)
 
 
 # Per sequence length distribution
@@ -144,7 +144,7 @@ if (readType=='pairedEnd') {
     theme( axis.title.x =element_text(size=12), axis.title.y =element_text(size=12), 
            axis.text.x=element_text(size=7,angle=90), axis.text.y=element_text(size=12))  + ylab("") 
 }
-ggsave(filename=paste0(outdir,'/sequence_length_distribution', suffix, '.png'), width=10, height=5, units='in', plot=p)
+ggsave(filename=paste0(outdir,'/sequence_length_distribution', suffix, '.pdf'), width=10, height=5, units='in', plot=p)
 
 
 # Per duplication levels
@@ -191,5 +191,5 @@ if (readType=='pairedEnd') {
     theme(axis.text.x = element_text(size = 8, angle=90), 
           axis.title.y=element_blank())  + xlab("Position in read")  
 }
-ggsave(filename=paste0(outdir,'/sequence_dup_levels', suffix, '.png'), width=10, height=5, units='in', plot=p)
+ggsave(filename=paste0(outdir,'/sequence_dup_levels', suffix, '.pdf'), width=10, height=5, units='in', plot=p)
 
