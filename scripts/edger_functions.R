@@ -86,7 +86,7 @@ multipleComparison=function(dge,comparison,design, min.count, min.nsamples, gtf.
     # Differential Expression
     if (pairedDesign==TRUE){
       fit<-glmFit(dge,design)
-      lrt<-glmLRT(fit, coef=7)
+      lrt<-glmLRT(fit, coef=ncol(design))
       results=topTags(lrt, n=dim(lrt)[1])[[1]]
     } else {
       et <- exactTest(dge, pair=c(temp_comparison[2], temp_comparison[1]))
