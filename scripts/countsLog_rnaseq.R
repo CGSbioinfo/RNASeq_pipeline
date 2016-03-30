@@ -81,7 +81,8 @@ write.csv(counting_summ, paste0(outdir,'/Number_of_features_detected.csv'))
 data.melt=suppressMessages(melt(data))
 pdf(paste0(outdir,"/countsDistributionHist.pdf"), width=12, height=7)
 colnames(data.melt)[1]='Sample'
-ggplot(data.melt, aes(x=log(value), fill=Sample )) + stat_bin(biwidth=1) + theme(legend.text=element_text(size=10), legend.key.size = unit(.45, "cm"))
+ggplot(data.melt, aes(x=log(value), fill=Sample )) + geom_bar() +
+	stat_bin(binwidth=1) + theme(legend.text=element_text(size=10), legend.key.size = unit(.45, "cm"))
 suppressMessages(dev.off())
 
 # Distribution lines
