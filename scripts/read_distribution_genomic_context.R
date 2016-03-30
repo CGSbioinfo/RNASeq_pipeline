@@ -10,8 +10,8 @@ suppressMessages(library(rtracklayer))
 suppressMessages(library(Rsamtools))
 suppressMessages(require(grid))
 
-in_dir='V:/Sequencing//Analysis/NGS-E.Johnson-40018_total/alignedReads/QC/' # outdir
-out_dir='V:/Sequencing/Analysis/NGS-E.Johnson-40018_total/Report/figure' # outdirplots
+in_dir=commandArgs(TRUE)[1]
+out_dir= commandArgs(TRUE)[2]
 patt='pct_dist_'
 
 files=list.files(in_dir, pattern=patt)
