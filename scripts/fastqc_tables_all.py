@@ -20,9 +20,8 @@ def tables(i):
     os.system("fastqc_plot_data.py " + i + " all " + outdir)
 
 def plots(i):
-    outdir = re.sub('fastqc_data.txt', '', i)
-    os.system('Rscript /usr/local/bin/fastqc_plots_all.R ' + in_dir + ' ' + i + ' ' + readType + ' ' + 
-        out_dir_plots + ' ' + suffix_name  )
+    #outdir = re.sub('fastqc_data.txt', '', i)
+    os.system('Rscript /usr/local/bin/fastqc_plots_all.R ' + in_dir + ' ' + i + ' ' + readType + ' ' + out_dir_plots + ' ' + suffix_name  )
 
 
 ##############################################################
