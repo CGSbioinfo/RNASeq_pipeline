@@ -96,4 +96,4 @@ if __name__ == '__main__':
     # Piccard tools
     Parallel(n_jobs=8)(delayed(piccard_collect_metrics)(i) for i in sampleNames)
     Parallel(n_jobs=7)(delayed(pct)(i) for i in sampleNames)
-
+    os.system('Rscript /usr/local/bin/read_distribution_genomic_context.R ' + out_dir + ' ' + out_dir_plots )
