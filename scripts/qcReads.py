@@ -19,9 +19,9 @@ def qc_check(i):
     allFiles = os.listdir(in_dir + "/" + i )
     pairedReads_temp = [allFiles[y] for y, x in enumerate(allFiles) if re.findall("_R2", x)]
     functions.make_sure_path_exists(out_dir+'/'+i)
-    os.system("fastqc " + in_dir + "/" + i + "/" + i + "*_R1*.fastq" + gz + " --outdir=" + out_dir + "/" + i + " --nogroup --extract")
-    if pairedReads_temp:
-        os.system("fastqc " + path + "/rawReads/" + i + "/" + i + "*_R2*.fastq" + gz + " --outdir=" + out_dir + "/" + i + " --nogroup --extract")
+    os.system("echo \"fastqc "  + in_dir + "/" + i + "/" + i + "*_R1*.fastq" + gz + " --outdir=" + out_dir + "/" + i + " --nogroup --extract\" ")
+    #if pairedReads_temp:
+    #    os.system("fastqc " + in_dir +  + i + "/" + i + "*_R2*.fastq" + gz + " --outdir=" + out_dir + "/" + i + " --nogroup --extract")
 
 ####################
 
