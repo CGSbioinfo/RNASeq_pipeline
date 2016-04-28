@@ -54,8 +54,10 @@ if __name__ == '__main__':
     # Detect if files are gz
     gz = functions.check_gz(in_dir)
 
-
+    # Count command
     Parallel(n_jobs=7)(delayed(counting)(i) for i in sampleNames)
+    
+    # QC
     os.system("Rscript /usr/local/bin/countsLog_rnaseq.R " + out_dir + ' ' + mapping_summary_file)
-
+    os.system("Rscript /usr/local/bin/library_proportion.R " out_dir + ' ' + out_dir + ' ' gtfFile)
 

@@ -4,7 +4,7 @@ suppressMessages(library(rtracklayer))
 suppressMessages(library(GGally))
 
 
-multipleComparison=function(dge,comparison,design, min.count, min.nsamples, gtf.file){
+multipleComparison=function(data,comparison,pairedDesign, min.count, min.nsamples, gtf.file){
   # Initialize vector to record number of DE genes
   significant01=c()
   significant05=c()
@@ -21,23 +21,25 @@ multipleComparison=function(dge,comparison,design, min.count, min.nsamples, gtf.
     temp_sample_info=sample_info[which(sample_info$Group %in% temp_comparison),]
     temp_sample_info=droplevels(temp_sample_info)
     temp_data=data[,which(colnames(data)%in%temp_sample_info$SampleID)]
+    temp_data=temp_data[!rowSums(temp_data)==0,]
     group=group <- c(as.character(temp_sample_info$Group))
     newd=paste0(temp_comparison, collapse = "__VS__")
     dir.create(paste0(outdir,'/',newd), showWarnings=FALSE)
     
     dge <- DGEList(counts=temp_data, group=group)
     
-    # Calculating the filtering threshold #
-    #-------------------------------------#
-    smallest_lib=min(dge$samples$lib.size)
-    smallest_lib_pm=smallest_lib/1000000
-    min.cpm=min.count/smallest_lib_pm
-    
     # Filtering dge #
     #---------------#
-    keep <- rowSums(cpm(dge)>min.cpm) >= min.nsamples
-    dge <- dge[keep,]
-    dge$samples$lib.size <- colSums(dge$counts)
+    if (!min.count==0){
+      # Calculating the filtering threshold #
+      #-------------------------------------#
+      smallest_lib=min(dge$samples$lib.size)
+      smallest_lib_pm=smallest_lib/1000000
+      min.cpm=min.count/smallest_lib_pm
+      keep <- rowSums(cpm(dge)>min.cpm) >= min.nsamples
+      dge <- dge[keep,]
+      dge$samples$lib.size <- colSums(dge$counts)
+    }
     
     # Normalizing dge #
     #-----------------#
@@ -93,7 +95,7 @@ multipleComparison=function(dge,comparison,design, min.count, min.nsamples, gtf.
       results=topTags(et, n=dim(et)[1])[[1]]
     }
     detags <- rownames(results) # chech individual cpm values for top genes
-    results = cbind(results,cpm(dge,log=TRUE)[detags,]) # chech individual cpm values for top genes
+    results = cbind(results,cpm(dge,log=FALSE)[detags,]) # chech individual cpm values for top genes
     
     results=cbind(GeneName=df[rownames(results)], results)
     write.csv(results,paste0(outdir, '/',newd,'/Results_', newd, ".csv"))
@@ -119,7 +121,6 @@ multipleComparison=function(dge,comparison,design, min.count, min.nsamples, gtf.
       dev.off()
     }
   }
-  
   summ=cbind(significant01,significant05)
   colnames(summ)=c('p<0.01',"p<0.05")
   write.csv(summ,paste0(outdir,"/significant_summ.csv"),quote=F)  

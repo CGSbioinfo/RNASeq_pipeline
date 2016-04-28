@@ -39,6 +39,27 @@ Now we use bedops to convert from gtf to bedfile
 It should be stored in the gtf/version/release/bedfile folder
 Keep version and release in the name of the bedFile
 
+# Update 27/04/2016: Bed file created from gtf using gtfToGenePred, this one works fine
+  $ gtfToGenePred -genePredExt -geneNameAsName2 Homo_sapiens.GRCh38.83.gtf gene.tmp
+  $ awk '{print $2,$4,$5,$1,0,$3,$4,$4,0,$8,$9,$10}' gene.tmp > Homo_sapiens.GRCh38.83.gtf.bed
+Then in R
+  > x=read.table('Homo_sapiens.GRCh38.83.gtf.bed')
+  > start=x$V2
+  > exon_start=as.character(x$V11)
+  > exon_start=strsplit(exon_start, split=',')
+  > exon_end=as.character(x$V12)
+  > exon_end=strsplit(exon_end, split=',')
+  > exon_size=sapply(1:length(exon_start),function(x){paste(as.numeric(exon_end[[x]])-as.numeric(exon_start[[x]]), collapse=',')})
+  > exon_start_new=sapply(1:length(exon_start),function(x){paste(as.numeric(exon_start[[x]])-as.numeric(start[x]), collapse=',')})
+  > x$V11=exon_size
+  > x$V12=exon_start_new
+  > x$V11=paste0(x$V11,',')
+  > x$V12=paste0(x$V12,',')
+
+write.table(x,'Homo_sapiens.GRCh38.83.gtf.bed',sep='\t', quote=F, row.names=FALSE, col.names=FALSE)
+
+ 
+  
 
 BEDFILE 10K
 -----------
@@ -64,6 +85,8 @@ We create a random sample of 10000 gene to do some QC.
 
 Save in /mnt/cgs-fs3/Sequencing/Genome/Human/bed/grch38/genecode/v22/genecode_grch38_hg38_10k.bed
 
+# Update 27/04/2016: back to use the bedfile created with gtfToGenePred
+  $ shuf -n 10000 Homo_sapiens.GRCh38.83.gtf.bed > Homo_sapiens.GRCh38.83_10K.gtf.bed
 
 REFLAT 
 ------
@@ -79,15 +102,20 @@ Keep version and release in the name of the refFlat
 
 rRNA Interval list
 ------------------
-We obtained the rRNA from the bedfile
+We use bedops to convert from gtf to bedfile
+  $ gtf2bed < gtf > Homo_sapiens.GRCh38.83.bed
+
+We obtained the rRNA from that bedfile
   $ awk '{if($8=="gene"){print $0}}' Homo_sapiens.GRCh38.83.bed | awk '{if($19=="\"rRNA\";"){print $0}}' > Homo_sapiens.GRCh38.83.rRNA.bed
 
 We downloaded a script to create interval list from https://gist.github.com/adomingues/57e3c2f9f4aca8dfde7 and run:
-  $ createRNAInterval_list.sh hg38 rRNA_genes.bed
+  $ createRNAInterval_list.sh hg Homo_sapiens.GRCh38.83.rRNA.bed
 
 Create an interval header and cat it: 
   $ samtools view -H bamfile |  grep '@' > interval_header
-  $ cat interval_header hg38.rRNA.interval_list > hg38.rRNA.interval_list2 && mv hg38.rRNA.interval_list2 hg38.rRNA.interval_list
+  $ cat interval_header hg.rRNA.interval_list > hg38.83.rRNA.interval_list2 && mv hg38.83.rRNA.interval_list2 hg38.83.rRNA.interval_list
+
+Note: bam file used should have been created with same gtf than current ex: hg38.83
 
 
 

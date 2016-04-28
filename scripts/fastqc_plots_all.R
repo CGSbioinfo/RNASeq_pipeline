@@ -39,27 +39,28 @@ generate_qc_plot=function(files,sample_name,type){
       p=ggplot(dat,
              aes(x = Base, ymin = x10th_percentile, lower = Lower_quartile, middle = Median, upper = Upper_quartile, 
                  ymax = x90th_percentile)) + 
-        geom_boxplot(stat='identity') + facet_wrap(~panel) + ggtitle(sample_temp) + 
-        theme(axis.text.x = element_text(size = 8, angle=90, hjust=1, vjust=1), 
-              plot.title = element_text(lineheight=.8, face="bold")) + 
+        geom_boxplot(stat='identity', fill='yellow') + facet_wrap(~panel) + ggtitle(sample_temp) + 
+        theme(axis.text.x = element_text(size = 5, angle=90, hjust=1, vjust=1), axis.text.y=element_text(size=6),
+              plot.title = element_text(lineheight=.8, face="bold", size=9), 
+	      axis.title=element_text(size=10), strip.text=element_text(size=8)) + 
         annotate("rect", xmin=-Inf, xmax=Inf, ymin=0, ymax=20, alpha=0.1, fill="red") + 
         annotate("rect", xmin=-Inf, xmax=Inf, ymin=20, ymax=28, alpha=0.1, fill="yellow") + 
-        annotate("rect", xmin=-Inf, xmax=Inf, ymin=28, ymax=Inf, alpha=0.1, fill="green") + 
+        annotate("rect", xmin=-Inf, xmax=Inf, ymin=28, ymax=Inf, alpha=0.1, fill="green")  
         xlab("Position of base in read")
     } else {
       dat=dat_r1
       p=ggplot(dat, 
              aes(x = Base, ymin = x10th_percentile, lower = Lower_quartile, middle = Median, upper = Upper_quartile, 
                  ymax = x90th_percentile)) + 
-        geom_boxplot(stat='identity') + ggtitle(sample_temp) + 
-        theme(axis.text.x = element_text(size = 8, angle=90, hjust=1, vjust=1), 
-              plot.title = element_text(lineheight=.8, face="bold")) + 
+        geom_boxplot(stat='identity', fill='yellow') + ggtitle(sample_temp) + 
+        theme(axis.text.x = element_text(size = 8, angle=90, hjust=1, vjust=1), axis.text.y=element_text(size=6), 
+              plot.title = element_text(lineheight=.8, face="bold"), axis.title=element_text(size=10)) + 
         annotate("rect", xmin=-Inf, xmax=Inf, ymin=0, ymax=20, alpha=0.1, fill="red") + 
         annotate("rect", xmin=-Inf, xmax=Inf, ymin=20, ymax=28, alpha=0.1, fill="yellow") + 
         annotate("rect", xmin=-Inf, xmax=Inf, ymin=28, ymax=Inf, alpha=0.1, fill="green") + 
         xlab("Position of base in read")
     }
-    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_per_base_sequence_qual.pdf'), plot=p)
+    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_per_base_sequence_qual.pdf'), plot=p, height=3.5, width=10)
   } else if (type=='per_base_sequence_content.txt'){
     colnames(dat_r1)=c('Base','%G','%A','%T','%C')
     dat_r1$Base <- factor(dat_r1$Base, as.character(dat_r1$Base))
@@ -73,17 +74,15 @@ generate_qc_plot=function(files,sample_name,type){
       dat=rbind(dat_r1,dat_r2)
       p=ggplot(dat, aes(x=Base, y=value, group=variable, colour=variable)) + 
         geom_line() + facet_wrap(~panel) + ggtitle(sample_temp) + 
-        theme(axis.text.x = element_text(size = 8, angle=90), axis.title.y=element_blank(), 
-              legend.position="top", plot.title = element_text(lineheight=.8, face="bold", vjust=-1.5))  + 
-        xlab("Position in read") +  ylim(0, 100)
+        theme(axis.text.x = element_text(size = 5, angle=90), axis.title.x=element_text(size=10),axis.title.y=element_blank(), axis.text.y=element_text(size=6),strip.text=element_text(size=8), legend.position="top", plot.title = element_text(size=9,lineheight=.8, face="bold", vjust=-1.5))  + xlab("Position in read") +  ylim(0, 100)
     } else {
       dat=dat_r1
       p=ggplot(dat, aes(x=Base, y=value, group=variable, colour=variable)) + geom_line() + 
         ggtitle(sample_temp) + theme(axis.text.x = element_text(size = 8, angle=90), axis.title.y=element_blank(), 
-                                     legend.position="top", plot.title = element_text(lineheight=.8, face="bold", vjust=-1.5)) + 
+                                     legend.position="top", plot.title = element_text(lineheight=.5, face="bold", vjust=-1.5)) + 
         xlab("Position in read") +  ylim(0, 100) 
     }
-    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_per_base_sequence_content.pdf'), plot=p)
+    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_per_base_sequence_content.pdf'), plot=p, height=3.5, width=10)
   } else if (type=='kmer_content.txt'){
     colnames(dat_r1)=c('Sequence','Content','PValue', 'Obs_Exp_Max', 'Max_Obs_Exp_Position' )
     nbases=76
@@ -134,7 +133,7 @@ generate_qc_plot=function(files,sample_name,type){
                                      plot.title = element_text(lineheight=.8, face="bold", vjust=-1.5))  + 
         xlab("Position in read")
     } 
-    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_kmer_content.pdf'), plot=p)
+    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_kmer_content.pdf'), plot=p, height=3.5, width=10)
   }
 }
 

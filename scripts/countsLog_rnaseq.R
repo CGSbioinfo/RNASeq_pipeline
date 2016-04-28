@@ -64,7 +64,7 @@ write.csv(counting_summ, paste0(outdir,'/counts_in_features.csv'))
 # Plot
 table=t(t(counting_summ[,-1]/counting_summ[,1]*100))
 data.melt=melt(table)
-pdf(paste0(outdir,"/counts_in_features.pdf"))
+pdf(paste0(outdir,"/counts_in_features.pdf"), width=12)
 ggplot(data.melt, aes(x=X1, y=value, fill=X2, group=X2 )) + geom_bar(stat='identity') + 
        theme(axis.text.x=element_text(angle=90, hjust=1)) + labs(fill="") + xlab('Sample') + ylab('Percentage')
 dev.off()
@@ -81,8 +81,13 @@ write.csv(counting_summ, paste0(outdir,'/Number_of_features_detected.csv'))
 data.melt=suppressMessages(melt(data))
 pdf(paste0(outdir,"/countsDistributionHist.pdf"), width=12, height=7)
 colnames(data.melt)[1]='Sample'
-ggplot(data.melt, aes(x=log(value), fill=Sample )) + geom_bar() +
-	stat_bin(binwidth=1) + theme(legend.text=element_text(size=10), legend.key.size = unit(.45, "cm"))
+ggplot(data.melt, aes(x=log(value), fill=Sample )) + geom_bar(binwidth=.2) + 
+	theme(legend.text=element_text(size=10), legend.key.size = unit(.78, "cm"))
+suppressMessages(dev.off())
+
+pdf(paste0(outdir,"/countsDistributionHist_per_sample.pdf"), width=12, height=7)
+colnames(data.melt)[1]='Sample'
+ggplot(data.melt, aes(x=log(value), fill=Sample )) + geom_bar(binwidth=.2) + facet_wrap(~Sample) + theme(legend.position='none')
 suppressMessages(dev.off())
 
 # Distribution lines
@@ -118,7 +123,7 @@ ggplot(distribution.melt,aes(x=bins,y=value,color=variable,group=variable)) + ge
   xlab('Number of counts') + ylab('Percentage of genes') + 
   scale_y_continuous(breaks=seq(0,70,10), labels=c('0%','10%','20%','30%','40%','50%','60%','70%')) + 
   scale_colour_discrete(name='Sample') + 
-  theme(axis.text.x=element_text(angle=90), axis.text.y=element_text(),legend.text=element_text(size=10), legend.key.size = unit(.38, "cm"))
+  theme(axis.text.x=element_text(angle=90), axis.text.y=element_text(),legend.text=element_text(size=10), legend.key.size = unit(.78, "cm"))
 dev.off()
 
 # Distribution lines removing all zeros
@@ -155,7 +160,7 @@ ggplot(distribution.melt,aes(x=bins,y=value,color=variable,group=variable)) + ge
   xlab('Number of counts') + ylab('Percentage of genes') + 
   scale_y_continuous(breaks=seq(0,70,10), labels=c('0%','10%','20%','30%','40%','50%','60%','70%')) + 
   scale_colour_discrete(name='Sample') + 
-  theme(axis.text.x=element_text(angle=90), axis.text.y=element_text(),legend.text=element_text(size=10), legend.key.size = unit(.38, "cm"))
+  theme(axis.text.x=element_text(angle=90), axis.text.y=element_text(),legend.text=element_text(size=10), legend.key.size = unit(.78, "cm"))
 dev.off()
 
 

@@ -44,7 +44,7 @@ data.notcounted=data[which(rownames(data)=='__no_feature'):dim(data)[1],]
 data=data[-c(which(rownames(data)=='__no_feature'):dim(data)[1]),]
 total.data.counted=colSums(data)
 
-
+#data=data[-which(rownames(data)=='ENSMUSG00000106106'),]
 # Getting information about the groups #
 #--------------------------------------#
 sample_info = read.csv(sample_info)
@@ -55,12 +55,11 @@ group <- c(as.character(sample_info$Group))
 # Matching the data matrix to the sample_info table #
 #---------------------------------------------------#
 data=data[,match(as.character(sample_info$SampleID),colnames(data))]
-
+data_all_samples=data[!rowSums(data)==0,]
 
 # Creating a DGE object to analyse data with edgeR #
 #--------------------------------------------------#
-dge <- DGEList(counts=data, group=group)
-
+dge <- DGEList(counts=data_all_samples, group=group)
 
 # Looking at mds before filtering
 dge.temp <- calcNormFactors(dge)
@@ -70,23 +69,23 @@ for (i in 1:length(as.character(dge.temp$samples$group))){
   mycol=c(mycol,mycoldf[which(mycoldf[,1]==as.character(dge.temp$samples$group)[i]),2])
 }
 pdf(paste0(outdir,'/mds_normalised_noFiltering', ".pdf"))
-plotMDS(dge.temp, col=mycol, method="bcv")
+plotMDS(dge.temp, col=mycol, method="bcv", pch=19)
 dev.off()
-
 
 # Calculating the filtering threshold #
 #-------------------------------------#
-smallest_lib=min(dge$samples$lib.size)
-smallest_lib_pm=smallest_lib/1000000
-min.cpm=min.count/smallest_lib_pm
-
-
+if (!min.count==0){
+  smallest_lib=min(dge$samples$lib.size)
+  smallest_lib_pm=smallest_lib/1000000
+  min.cpm=min.count/smallest_lib_pm
 # Filtering dge #
 #---------------#
-keep <- rowSums(cpm(dge)>min.cpm) >= min.nsamples
-dge.all.samples <- dge[keep,]
-dge.all.samples$samples$lib.size <- colSums(dge.all.samples$counts)
-
+  keep <- rowSums(cpm(dge)>min.cpm) >= min.nsamples
+  dge.all.samples <- dge[keep,]
+  dge.all.samples$samples$lib.size <- colSums(dge.all.samples$counts)
+} else {
+  dge.all.samples <- dge
+}
 
 # Normalizing dge #
 #-----------------#
@@ -109,7 +108,7 @@ dev.off()
 
 y = cpm(dge.all.samples,prior.count = 1, log=TRUE)
 pdf(paste0(outdir,'/Heatmap_allSamples', ".pdf"), width=9,height=9)
-heatmap.2(cor(y),scale=c('none'), density.info='density', trace='none', cex.lab=0.8)
+heatmap.2(cor(y),scale=c('none'), density.info='density', trace='none', margins=c(8,8), cex.lab=0.8)
 dev.off()
 
 pdf(paste0(outdir,'/Libsize', ".pdf"), width=9)
@@ -127,4 +126,4 @@ if (design=='pairedSamples'){
   pairedDesign=FALSE
 }
 
-multipleComparison(dge,comparisons,pairedDesign, min.count, min.nsamples, gtf.file)
+multipleComparison(data,comparisons,pairedDesign, min.count, min.nsamples, gtf.file)
