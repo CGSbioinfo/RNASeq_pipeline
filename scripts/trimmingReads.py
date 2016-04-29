@@ -35,6 +35,7 @@ if __name__ == '__main__':
     parser.add_argument('--analysis_info_file', help='Text file with details of the analysis. Default=analysis_info.txt', default='analysis_info.txt')
     parser.add_argument('--in_dir', help='Path to folder containing fastq files. Default=rawReads/', default='rawReads/')
     parser.add_argument('--out_dir', help='Path to out put folder. Default=trimmedReads/', default='trimmedReads/')
+    parser.add_argument('--out_dir_plots', help='Path to out put folder. Default=Report/figure/data/', default='Report/figure/data/')
     args=parser.parse_args()
 
     # Read analysis info file
@@ -48,11 +49,15 @@ if __name__ == '__main__':
     # Set input and output directories if not 'rawReads/'
     in_dir=args.in_dir
     out_dir=args.out_dir
+    out_dir_plots=args.out_dir_plots
 
     # Detect if files are gz
     gz = functions.check_gz(in_dir)
 
     functions.make_sure_path_exists(out_dir)
     Parallel(n_jobs=7)(delayed(trimming)(i) for i in sampleNames)
-
+    
+    functions.make_sure_path_exists(out_dir_plots)
+    # Nreads
+    os.system("Rscript /usr/local/bin/trimming_summary.R " + in_dir + " " + out_dir + " " + out_dir_plots )
 

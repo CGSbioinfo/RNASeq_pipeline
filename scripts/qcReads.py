@@ -19,9 +19,9 @@ def qc_check(i):
     allFiles = os.listdir(in_dir + "/" + i )
     pairedReads_temp = [allFiles[y] for y, x in enumerate(allFiles) if re.findall("_R2", x)]
     functions.make_sure_path_exists(out_dir+'/'+i)
-    os.system("echo \"fastqc "  + in_dir + "/" + i + "/" + i + "*_R1*.fastq" + gz + " --outdir=" + out_dir + "/" + i + " --nogroup --extract\" ")
-    #if pairedReads_temp:
-    #    os.system("fastqc " + in_dir +  + i + "/" + i + "*_R2*.fastq" + gz + " --outdir=" + out_dir + "/" + i + " --nogroup --extract")
+    os.system("fastqc "  + in_dir + "/" + i + "/" + i + "*_R1*.fastq" + gz + " --outdir=" + out_dir + "/" + i + " --nogroup --extract ")
+    if pairedReads_temp:
+        os.system("fastqc " + in_dir +  + i + "/" + i + "*_R2*.fastq" + gz + " --outdir=" + out_dir + "/" + i + " --nogroup --extract")
 
 ####################
 
@@ -31,6 +31,7 @@ if __name__ == '__main__':
     parser.add_argument('--analysis_info_file', help='Text file with details of the analysis. Default=analysis_info.txt', default='analysis_info.txt')
     parser.add_argument('--in_dir', help='Path to folder containing fastq files. Default=rawReads/', default='rawReads/')
     parser.add_argument('--out_dir', help='Path to out put folder. Default=rawReads/', default='rawReads/')
+    parser.add_argument('--out_dir_plots', help='Path to out put folder. Default=Report/figure/data/', default='Report/figure/data/')
     args=parser.parse_args()
 
     # Set path of working directory
@@ -44,6 +45,7 @@ if __name__ == '__main__':
     # Set input and output directories if not 'rawReads/'
     in_dir=args.in_dir
     out_dir=args.out_dir
+    out_dir_plots=args.out_dir_plots
     #try:
     #    in_dir=sys.argv[2]
     #    organizeWorkingDirectory.make_sure_path_exists(in_dir)
@@ -59,9 +61,11 @@ if __name__ == '__main__':
     # Detect if files are gz 
     gz = functions.check_gz(in_dir)
 
+    # Run fastqc
     Parallel(n_jobs=7)(delayed(qc_check)(i) for i in sampleNames)
 
-
+    # Number of reads per sample
+    os.system("Rscript /usr/local/bin/preprocessing_numbers.R " + in_dir + " " + out_dir_plots) 
 
 
 
