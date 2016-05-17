@@ -49,13 +49,13 @@ if (readType=='pairedEnd') {
   mr2=cbind(mr2,Read='Read 2')
   
   d=rbind(mr1,mr2)
-  p=ggplot(d, aes(x = x, y = y, group=Sample, colour=Sample, shape=Sample)) + geom_line() + geom_point() + facet_wrap(~Read) +
+  p=ggplot(d, aes(x = x, y = y, group=Sample, colour=Sample, shape=Sample)) + geom_line(size=0.3) + geom_point(size=1) + facet_wrap(~Read) +
     theme( axis.title.x =element_text(size=9), axis.title.y =element_text(size=6), 
            axis.text.x=element_text(size=8), axis.text.y=element_text(size=7), legend.text=element_text(size=8),  
            legend.key.height=unit(.8,"line"), axis.title.y=element_blank()) + ylab("") + xlab('Mean Quality score') + scale_shape_manual(values=1:length(unique(d$Sample))) 
 } else {
   d=mr1
-  p=ggplot(d, aes(x = x, y = y, group=Sample, colour=Sample, shape=Sample)) + geom_line() + geom_point() + facet_wrap(~Read) +
+  p=ggplot(d, aes(x = x, y = y, group=Sample, colour=Sample, shape=Sample)) + geom_line(size=0.3) + geom_point(size=1) + facet_wrap(~Read) +
     theme(axis.title.y =element_text(size=16), 
            axis.text.x=element_text(size=12), axis.text.y=element_text(size=12), legend.text=element_text(size=7),  
            legend.key.height=unit(.8,"line"), axis.title.y=element_blank()) + ylab("") + xlab('Mean Quality score') + scale_shape_manual(values=1:length(unique(d$Sample)))
@@ -96,11 +96,11 @@ if (readType=='pairedEnd') {
   mr2=mr2[-1,]
   
   d=rbind(mr1,mr2)
-  p=ggplot(d, aes(x = x, y = y, group=Sample, colour=Sample, shape=Sample)) + geom_line() + geom_point() + facet_wrap(~Read) +  xlab('%GC') + ylab('') + theme(legend.key.height=unit(.8,"line")) + scale_shape_manual(values=1:length(unique(d$Sample)))
+  p=ggplot(d, aes(x = x, y = y, group=Sample, colour=Sample, shape=Sample)) + geom_line(size=.3) + geom_point(size=1) + facet_wrap(~Read) +  xlab('%GC') + ylab('') + theme(legend.key.height=unit(.8,"line")) + scale_shape_manual(values=1:length(unique(d$Sample)))
 
 } else {
   d=mr1
-  p=ggplot(d, aes(x = x, y = y, group=Sample, colour=Sample, shape=Sample)) + geom_line() + geom_point() + facet_wrap(~Read) + 
+  p=ggplot(d, aes(x = x, y = y, group=Sample, colour=Sample, shape=Sample)) + geom_line(size=.3) + geom_point(size=1) + facet_wrap(~Read) + 
     xlab('%GC') + ylab('') + theme(legend.key.height=unit(.8,"line")) +  scale_shape_manual(values=1:length(unique(d$Sample)))
 
 }
@@ -138,12 +138,12 @@ if (readType=='pairedEnd') {
   }
   mr2=mr2[-1,]
   d=rbind(mr1,mr2)
-  p=ggplot(d, aes(x = Position, y = Frequency, group=Sample, colour=Sample, shape=Sample)) + geom_line() + geom_point() + facet_wrap(~Read) +
+  p=ggplot(d, aes(x = Position, y = Frequency, group=Sample, colour=Sample, shape=Sample)) + geom_line(size=.3) + geom_point(size=1) + facet_wrap(~Read) +
     theme( axis.title.x =element_text(size=12), axis.title.y =element_text(size=6), 
            axis.text.x=element_text(size=7,angle=90), axis.text.y=element_text(size=7))  + ylab("") + xlab('Length') + scale_shape_manual(values=1:length(unique(d$Sample)))
 } else {
   d=mr1
-  p=ggplot(d, aes(x = Position, y = Frequency, group=Sample, colour=Sample, shape=Sample)) + geom_line() + geom_point() + facet_wrap(~Read) +
+  p=ggplot(d, aes(x = Position, y = Frequency, group=Sample, colour=Sample, shape=Sample)) + geom_line(size=.3) + geom_point(size=1) + facet_wrap(~Read) +
     scale_shape_manual(values=1:length(unique(d$Sample))) + 
     theme( axis.title.x =element_text(size=12), axis.title.y =element_text(size=12), legend.key.height=unit(.8,"line"), 
            axis.text.x=element_text(size=7,angle=90), axis.text.y=element_text(size=12))  + ylab("") + xlab('length')
@@ -185,13 +185,13 @@ if (readType=='pairedEnd') {
   mr2=mr2[-1,]
   d=rbind(mr1,mr2)
   d$Duplication_Level=factor(d$Duplication_Level,levels=unique(d$Duplication_Level))
-  p=ggplot(d, aes(x=Duplication_Level, y=Percentage, group=Sample, colour=Sample, shape=Sample)) + geom_line() + geom_point() + facet_wrap(~Read) + scale_shape_manual(values=1:length(unique(d$Sample))) +
+  p=ggplot(d, aes(x=Duplication_Level, y=Percentage, group=Sample, colour=Sample, shape=Sample)) + geom_line(size=.3) + geom_point(size=1) + facet_wrap(~Read) + scale_shape_manual(values=1:length(unique(d$Sample))) +
     theme(axis.text.x = element_text(size = 9, angle=90), legend.key.height=unit(.8,"line"),
                         axis.title.y=element_blank())  + xlab("Number of copies per read")
 } else {
   d=mr1
   d$Duplication_Level=factor(d$Duplication_Level,levels=unique(d$Duplication_Level))
-  p=ggplot(d, aes(x=Duplication_Level, y=Percentage, group=Sample, colour=Sample, shape=Sample)) + geom_line() + geom_point() + facet_wrap(~Read) + 
+  p=ggplot(d, aes(x=Duplication_Level, y=Percentage, group=Sample, colour=Sample, shape=Sample)) + geom_line(size=.3) + geom_point(size=1) + facet_wrap(~Read) + 
     theme(axis.text.x = element_text(size = 9, angle=90), legend.key.height=unit(.8,"line"),
           axis.title.y=element_blank())  + xlab("Number of copies per read") + scale_shape_manual(values=1:length(unique(d$Sample)))
 }

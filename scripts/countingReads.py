@@ -59,5 +59,5 @@ if __name__ == '__main__':
     
     # QC
     os.system("Rscript /usr/local/bin/countsLog_rnaseq.R " + out_dir + ' ' + mapping_summary_file)
-    os.system("Rscript /usr/local/bin/library_proportion.R " out_dir + ' ' + out_dir + ' ' gtfFile)
+    os.system("Rscript /usr/local/bin/library_proportion.R " + out_dir + ' ' + out_dir + ' ' + gtfFile)
 

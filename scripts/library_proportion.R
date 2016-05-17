@@ -63,7 +63,7 @@ matrix=matrix[-which(rowSums(matrix)==0),]
 matrix.melt=melt(matrix)
 colnames(matrix.melt)[2]='Sample'
 pdf(paste0(outdir,'/biotype_proportion.pdf'),width=12, height=7)
-ggplot(matrix.melt, aes(x=X1, y=value, colour=Sample, shape=Sample)) + geom_point(size=1) + theme(axis.text.x=element_text(angle=90), axis.text=element_text(size=12, colour='black'), axis.title.x=element_blank(), legend.text=element_text(size=8)) + scale_shape_manual(values=0:ncol(data)) + ylab('Library Proportion')
+ggplot(matrix.melt, aes(x=X1, y=value, colour=Sample, shape=Sample)) + geom_point(size=1) + theme(axis.text.x=element_text(angle=90), axis.text=element_text(size=10, colour='black'), axis.title.x=element_blank(), legend.text=element_text(size=8)) + scale_shape_manual(values=0:ncol(data)) + ylab('Library Proportion')
 dev.off()
 
 # Library proportion #
@@ -96,6 +96,6 @@ dev.off()
 prop.top=prop.top[prop.top$gene_biotype=='protein_coding',]
 pdf(paste0(outdir,'/top_expressed_genes_protein_coding.pdf'),width=12, height=7)
 ggplot(prop.top,aes(x=gene_name,y=value,group=variable,color=variable, shape=variable)) +
-geom_point(size=3) + facet_wrap(~gene_biotype, scales='free_x')+ xlab('') + ylab('Library proportion') + theme(axis.text=element_text(size=10, color='black'),axis.text.x=element_text(angle=90), axis.title=element_text(size=10), legend.text=element_text(size=8),  legend.title=element_text(size=8)) + scale_shape_manual(values=0:ncol(data))
+geom_point(size=3) + facet_wrap(~gene_biotype, scales='free_x')+ xlab('') + ylab('Library proportion') + theme(axis.text=element_text(size=8, color='black'),axis.text.x=element_text(angle=90, vjust=0.5), axis.title=element_text(size=10), legend.text=element_text(size=8),  legend.title=element_text(size=8)) + scale_shape_manual(values=0:ncol(data))
 dev.off()
 #legend.key.height=unit(.3, 'cm'),
