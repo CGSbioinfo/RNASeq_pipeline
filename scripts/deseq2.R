@@ -4,6 +4,8 @@ suppressMessages(library(DESeq2))
 suppressMessages(library(gplots))
 suppressMessages(library(rtracklayer))
 suppressMessages(library(GGally))
+suppressMessages(library(ggplot2))
+#suppressMessages(library(vsn))
 source("/usr/local/bin/deseq2_functions.R")
 
 indir = commandArgs(TRUE)[1]
@@ -56,33 +58,51 @@ data=data[,match(as.character(sample_info$SampleID),colnames(data))]
 # Creating a DDS object to analyse data with DESEQ2 #
 #--------------------------------------------------#
 
-#colData<-data.frame(Group=sample_info$Group)
-#rownames(colData)=sample_info$SampleID
+colData<-data.frame(Group=sample_info$Group)
+rownames(colData)=sample_info$SampleID
 
-#dds <- DESeqDataSetFromMatrix(countData= data, colData=colData, design= ~Group)
+dds <- DESeqDataSetFromMatrix(countData= data, colData=colData, design= ~Group)
 
 # Prefiltering
-#dds <- dds[rowSums(counts(dds)) > 1, ]
-#dds <- DESeq(dds)
+dds <- dds[rowSums(counts(dds)) > 1, ]
+dds <- DESeq(dds)
 
 # Exploring data  #
 #-----------------#
 # Transforming values
-#rld <- rlog(dds, blind=FALSE)
+rld <- rlog(dds, blind=FALSE)
+#rld_blind <- rlog(dds, blind=TRUE)
 
 # Heatmap genes
 #select <- order(rowMeans(counts(dds, normalized=TRUE)), decreasing=TRUE)[1:20]
-#heatmap.2(assay(rld)[select,], margins=c(8,12), scale=c('none'), density.info='density', trace='none', Rowv=FALSE, Colv=FALSE, dendogram='none')
+pdf(paste0(outdir,'/Heatmap_allSamples', ".pdf"), width=9,height=9)
+heatmap.2(cor(assay(rld)), margins=c(12,12), scale=c('none'), density.info='density', trace='none')
+dev.off()
 
-# Heatmap sample dist
-#y=assay(rld)
-#pdf(paste0(outdir,'/Heatmap_allSamples', ".pdf"), width=9,height=9)
-#heatmap.2(cor(y),scale=c('none'), density.info='density', trace='none', margins=c(8,8), cex.lab=0.8)
+#y=as.matrix(dist(t(assay(rld))))
+#pdf(paste0(outdir,'/Heatmap_allSamples_dist', ".pdf"), width=9,height=9)
+#heatmap.2(y, margins=c(12,12), scale=c('none'), density.info='density', trace='none')
 #dev.off()
 
 # PCA
-#plotPCA(rld)
+pca_data=plotPCA(rld, intgroup=c('Group'), returnData=TRUE)
+percentVar=round(100*attr(pca_data,'percentVar'))
+pdf(paste0(outdir,'/PCA_allSamples',".pdf"), width=9,height=9)
+ggplot(pca_data, aes(PC1,PC2, color=Group, label=rownames(pca_data))) + geom_point() + geom_text(show_guide=F) + 
+  xlab(paste0('PC1: ', percentVar[1], '% variance'))  + ylab(paste0('PC2: ', percentVar[2], '% variance')) + 
+  theme(panel.background=element_rect(fill='white'), panel.grid.major=element_line(colour='grey',size=.3,linetype=2), 
+        panel.grid.minor=element_line(colour='grey',size=.3,linetype=2)) + xlim(range(pca_data$PC1)[1]-3, 
+                                                                                range(pca_data$PC1)[2]+3)
+dev.off()
+#pdf(paste0(outdir,'/PCA_allSamples', ".pdf"), width=9,height=9)
+#plotPCA(rld, intgroup=c('Group'))
+#dev.off()
 
+#Libsize
+pdf(paste0(outdir,'/Libsize', ".pdf"), width=9)
+par(mar=c(12.8,5.1,4.1,2.1))
+barplot(colSums(counts(dds, normalize=FALSE)), names=colnames(counts(dds, normalize=FALSE)), las=2, ylab="") # library sizes
+dev.off()
 
 # Doing Differential Gene Expression  #
 #-------------------------------------#

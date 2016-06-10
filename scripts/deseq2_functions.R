@@ -1,10 +1,12 @@
-suppressMessages(library(edgeR))
+suppressMessages(library(DESeq2))
 suppressMessages(library(gplots))
 suppressMessages(library(rtracklayer))
 suppressMessages(library(GGally))
+suppressMessages(library(ggplot2))
+#suppressMessages(library(vsn))
 
 
-multipleComparison=function(data,comparison,design, gtf.file){
+multipleComparison=function(data,comparisons,pairedDesign, gtf.file){
   # Initialize vector to record number of DE genes
   significant01=c()
   significant05=c()
@@ -21,68 +23,92 @@ multipleComparison=function(data,comparison,design, gtf.file){
     temp_sample_info=sample_info[which(sample_info$Group %in% temp_comparison),]
     temp_sample_info=droplevels(temp_sample_info)
     temp_data=data[,which(colnames(data)%in%temp_sample_info$SampleID)]
-    group=group <- c(as.character(temp_sample_info$Group))
+    group=c(as.character(temp_sample_info$Group))
     newd=paste0(temp_comparison, collapse = "__VS__")
     dir.create(paste0(outdir,'/',newd), showWarnings=FALSE)
     
-    temp_colData<-data.frame(Group=temp_sample_info$Group)
-    rownames(temp_colData)=temp_sample_info$SampleID
-
-    dds <- DESeqDataSetFromMatrix(countData= temp_data, colData=temp_colData, design= ~Group)
+    if (pairedDesign==TRUE){
+      print('paired')
+      temp_colData<-data.frame(Group=temp_sample_info$Group, Sibship=temp_sample_info$Sibship)
+      rownames(temp_colData)=temp_sample_info$SampleID
+      dds <- DESeqDataSetFromMatrix(countData= temp_data, colData=temp_colData, design=~Group)
+      design(dds)<-formula(~Sibship+Group)
+      dds$Group=relevel(dds$Group, ref=temp_comparison[2])
+    } else if (pairedDesign==FALSE) {
+      print('non-paired')
+      temp_colData<-data.frame(Group=temp_sample_info$Group)
+      rownames(temp_colData)=temp_sample_info$SampleID
+      dds <- DESeqDataSetFromMatrix(countData= temp_data, colData=temp_colData, design= ~Group)
+      dds$Group=relevel(dds$Group, ref=temp_comparison[2])
+    }
+    print(colData(dds))
+  
     
     #  Prefiltering #
     #---------------#
     dds <- dds[rowSums(counts(dds)) > 1, ]
+    print(dds)
+    dds <- DESeq(dds)
 
     # Normalizing dds #
     #-----------------#
-    dds <- estimateSizeFactors(dds)
-    pdf(paste0(outdir,'/',newd,'/size_factors_', newd, ".pdf"))
-    plot(sizeFactors(dds), colSums(counts(dds)))
-    abline(lm(colSums(counts(dds)) ~ sizeFactors(dds) + 0))
-    dev.off()
+    #dds <- estimateSizeFactors(dds)
+    #pdf(paste0(outdir,'/',newd,'/size_factors_', newd, ".pdf"))
+    #plot(sizeFactors(dds), colSums(counts(dds)))
+    #abline(lm(colSums(counts(dds)) ~ sizeFactors(dds) + 0))
+    #dev.off()
     
     # Exploring data  #
     #-----------------#
     rld <- rlog(dds, blind=FALSE)
 
-    # Heatmap genes
-    #select <- order(rowMeans(counts(dds, normalized=TRUE)), decreasing=TRUE)[1:20]
-    #heatmap.2(assay(rld)[select,], margins=c(12,12), scale=c('none'), density.info='density', trace='none', Rowv=FALSE, Colv=FALSE, dendogram='none')
+    # Heatmap genes 
+    pdf(paste0(outdir,'/',newd,'/Heatmap_',newd, ".pdf"), width=9,height=9)
+    heatmap.2(cor(assay(rld)), margins=c(14,14), scale=c('none'), density.info='density', trace='none')
+    dev.off()
 
-    # Heatmap sample dist
-    #y=assay(rld)
-    #pdf(paste0(outdir,'/',newd,'/Heatmap_', newd, ".pdf"))
-    #heatmap.2(cor(y),scale=c('none'), density.info='density', trace='none', margins=c(12,12), cex.lab=0.8)
+    #y=as.matrix(dist(t(assay(rld))))
+    #pdf(paste0(outdir,'/',newd,'/Heatmap_dist_', newd,".pdf"), width=9,height=9)
+    #heatmap.2(y, margins=c(14,14), scale=c('none'), density.info='density', trace='none')
     #dev.off()
 
     # PCA
-    #pdf(paste0(outdir,'/',newd,'/PCA_', newd, ".pdf"))
-    #plotPCA(rld, intgroup='Group')
+    pca_data=plotPCA(rld, intgroup=c('Group'), returnData=TRUE)
+    percentVar=round(100*attr(pca_data,'percentVar'))
+    print(percentVar)
+    print(pca_data)
+    #pdf(paste0(outdir,'/',newd,'/PCA_', newd,".pdf"), width=9,height=9)
+    p=ggplot(pca_data, aes(PC1,PC2, color=Group, label=rownames(pca_data))) + geom_point() + 
+     geom_text(show_guide=F) + xlab(paste0('PC1: ', percentVar[1], '% variance'))  + ylab(paste0('PC2: ', percentVar[2], '% variance')) + 
+     theme(panel.background=element_rect(fill='white'), panel.grid.major=element_line(colour='grey',size=.3,linetype=2), panel.grid.minor=element_line(colour='grey',size=.3,linetype=2)) + xlim(range(pca_data$PC1)[1]-3, range(pca_data$PC1)[2]+3)
+    ggsave(p,filename=paste0(outdir,'/',newd,'/PCA_', newd,".pdf"), width=9,height=9)
     #dev.off()
     
-    # scatter plot
+    #scatter plot
     png(paste0(outdir,'/',newd,'/ScatterPlot_', newd, ".png"), width = 1360, height = 1360)
     pairs.panels(assay(rld), smooth=FALSE)
     dev.off()
     
     # Design
-    if (pairedDesign==TRUE){
-      sibship=factor(temp_sample_info$Sibship)
-      treatment=factor(temp_sample_info$Group)
-      design(dds) <- ~sibship + treatment # this is not tested !!
-    } else {
-      design(dds) <- ~Group
-    }
+    #if (pairedDesign==TRUE){
+    #  sibship=factor(temp_sample_info$Sibship)
+    #  treatment=factor(temp_sample_info$Group)
+    #  design(dds) <- ~sibship + treatment # this is not tested !!
+    #} else {
+    #  design(dds) <- ~Group
+    #}
     
     # DE
-    dds <- DESeq(dds)
+    #dds <- DESeq(dds)
     res <- results(dds)
     res <- res[order(res$padj),]
-    #pdf(paste0(outdir, '/',newd,'/MAplot_', newd, ".pdf"))
-    #plotMA(res)
-    #dev.off()
-    head(res)
+    pdf(paste0(outdir, '/',newd,'/MAplot_', newd, ".pdf"))
+    plotMA(res)
+    dev.off()
+
+    #resMLE=results(dds,addMLE=TRUE)
+
+    #head(res)
     res <- as.data.frame(res)
 
     detags <- rownames(res)

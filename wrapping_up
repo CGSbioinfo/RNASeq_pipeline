@@ -1,0 +1,26 @@
+
+//////////////////////////
+// Calculate disk usage //
+//////////////////////////
+
+We calculate the disk usage of the main folders: rawReads, trimmedReads, alignedReads, countedReads, Report
+
+1. Create a folder named projectInfo/ in the main working directory of the project
+ $ mkdir projectInfo/
+
+2. Run the next line with the names of the corresponding folders
+ $  du -sh ./* | grep -e "rawReads\|trimmedReads\|alignedReads\|countedReads\|Report" | sed 's/.\///g' > projectInfo/projectDu.txt
+
+The output file has something like: 
+157G	alignedReads
+18M	countedReads
+68G	rawReads
+232M	Report
+62G	trimmedReads
+
+3. Record this in the spreadsheet rnase_disk_usage.csv
+
+
+
+
+
