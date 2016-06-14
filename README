@@ -1,4 +1,3 @@
-Tested on hypnotoad
 
 Software and scripts required
 Make sure the following software is installed: FastQC, Trim Galore, STAR, HTSeq, 
