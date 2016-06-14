@@ -1,4 +1,6 @@
-Tested on hypnotoad
+cgs-rnaseq v02
+This second version will be adapted and tested for the cluster.
+##------------------------------------------------------------------------------##
 
 Software and scripts required
 Make sure the following software is installed: FastQC, Trim Galore, STAR, HTSeq, 
@@ -23,6 +25,25 @@ Note: some scripts are called from ~/bin, which means a copy should be stored th
  $ for i in $(ls *); do cp $i /usr/local/bin; done # NEED SUDO!!
  $ for i in $(ls *); do chmod 777 /usr/local/bin/$i; done # NEED SUDO!
  $ cp junctionPlotAll.R ~/bin 
+
+##------------------------------------------------------------------------------##
+
+# Converting bcl to fastq and creating working folder
+1. The first step is to create a sample sheet using Ilumina Experiment Manager. An example of this sample
+sheet is NGS_J_Wang_40026B.csv. You can find the index sequences in basespace.
+
+2. Run the bcl2fastq script in the run folder
+  $ nohup bcl2fastq --sample-sheet NGS_J_Wang_40026B.csv --no-lane-splitting
+
+3. Create a folder with the name of the project in cgs-fs3/Sequencing/Analysis
+  $ mkdir NGS-J.Wang-40026B
+
+4. Change directory to the folder just created, which is now the working directory of the pipeline
+  $ cd /mnt/cgs-fs3/Sequencing/Analysis/NGS-J.Wang-40026B/
+
+5. Create a reads/ folder and move the reads created with bcl2fastq to this folder
+  $ mkdir reads/
+  $ mv /mnt/cgs-fs3/Sequencing/NextSeq_Output/160601_NS500125_0267_AH53GHBGXY/ reads/
 
 ##------------------------------------------------------------------------------##
 
