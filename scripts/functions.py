@@ -100,7 +100,7 @@ def read_sample_names(sample_names_file):
     return(sampleNames)
 
 def check_gz(dir):
-    """ Determines if fastq files are gzipped and returns a gz variable which will be added as a suffiz when fastq files are called in further steps"""
+    """ Determines if fastq files are gzipped and returns a gz variable which will be added as a suffix when fastq file names are called in further steps"""
     readFiles = []
     for root, dir, files in os.walk(dir):
         readFiles.extend(files)
