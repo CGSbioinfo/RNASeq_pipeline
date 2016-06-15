@@ -66,9 +66,12 @@ Setting up the analysis
   $ analysis_info.py
 This will create a file named analysis_info.txt, which needs to be filled in a text editor. For more details about how to fill this file, see analysis_info_guide.txt
 
-2.	Create a sample_names.txt file with the list of the sample names
-3.	Next run:
-    		$ organizeWorkingDirectory.py --analysis_info_file analysis_info.txt
+2. Create a sample_names.txt file with the list of the sample names. If your fastq files are saved in the reads/ subfolder, you can run:
+  $ ls reads/*fastq.gz | sed 's/.*\///g' | sed 's/_R.*//g' | uniq > sample_names.txt
+The names of the samples normally consist of sampleX_S1, sampleY_S2, etc.  
+
+3. Next run:
+  $ organizeWorkingDirectory.py --analysis_info_file analysis_info.txt
 
 QC and trimming
 ---------------
