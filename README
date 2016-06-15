@@ -29,6 +29,8 @@ Note: some scripts are called from ~/bin, which means a copy should be stored th
 ##------------------------------------------------------------------------------##
 
 # Converting bcl to fastq and creating working folder
+-----------------------------------------------------
+
 1. The first step is to create a sample sheet using Ilumina Experiment Manager. An example of this sample
 sheet is NGS_J_Wang_40026B.csv. You can find the index sequences in basespace.
 
@@ -45,15 +47,25 @@ sheet is NGS_J_Wang_40026B.csv. You can find the index sequences in basespace.
   $ mkdir reads/
   $ mv /mnt/cgs-fs3/Sequencing/NextSeq_Output/160601_NS500125_0267_AH53GHBGXY/ reads/
 
+Optional: 
+If the project had two or more runs and the aim is to merge them, you can use parallel.
+
+Example: 
+ls NGS_J_Wang_40026B/* | sed 's/.*\///g' | sed 's/_R.*//g' | uniq |  parallel -j 4 --no-notice "cat NGS_J_Wang_40026B/{}_R1_001.fastq.gz NGS_J_Wang_40026B_2/{}_R1_001.fastq.gz > {}_R1_001.fastq.gz"
+ls NGS_J_Wang_40026B/* | sed 's/.*\///g' | sed 's/_R.*//g' | uniq |  parallel -j 4 --no-notice "cat NGS_J_Wang_40026B/{}_R2_001.fastq.gz NGS_J_Wang_40026B_2/{}_R2_001.fastq.gz > {}_R2_001.fastq.gz"
+
+In any case, the fastq.gz files would be saved in the reads/ folder created in step 5, which is a subdirectory from the main working directory created in step 4. 
+
 ##------------------------------------------------------------------------------##
 
 # Running the pipeline
 
 Setting up the analysis
 -----------------------
-1.	Go to the main folder of the project and run:
-    		$ analysis_info.py
-This will create a file named analysis_info.txt, which needs to be filled in a text editor.
+1. Go to the main folder of the project and run:
+  $ analysis_info.py
+This will create a file named analysis_info.txt, which needs to be filled in a text editor. For more details about how to fill this file, see analysis_info_guide.txt
+
 2.	Create a sample_names.txt file with the list of the sample names
 3.	Next run:
     		$ organizeWorkingDirectory.py --analysis_info_file analysis_info.txt

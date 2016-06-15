@@ -37,10 +37,12 @@ def get_filepaths(directory):
 
     return file_paths
 
-def read_parameters_file(params_file):
-    params_file = params_file
+def read_analysis_info_file(info_file):
+    
+    """ Reads the analysis_info_file and creates variables for each element """
+
     args = {}
-    with open(params_file, 'r') as f:
+    with open(info_file, 'r') as f:
         for line in f:
             entry = line.strip().split("=")
             if entry[0]:
@@ -66,10 +68,17 @@ def read_parameters_file(params_file):
     return(args)
 
 def create_rawReads_folder(sampleNames):
+    """ Creates a rawReads/ folder and subfolders for each sample. Moves the fastq reads from reads_dir/ to their corresponding sample subfolder"""
+
+    # Check if rawReads exists
     folders = os.listdir('.')
     readsFiles = [folders[i] for i, x in enumerate(folders) if re.findall('rawReads',x)]
-    allFiles = get_filepaths(reads_dir)
+    
+    # Get reads from reads directory
+    allFiles = os.listdir(reads_dir)
     allFiles= [allFiles[i] for i, x in enumerate(allFiles) if re.findall("_R\d.*.fastq", x)]
+
+    # Move reads
     if not readsFiles:
         make_sure_path_exists('rawReads')
         sampleDir = []
@@ -78,17 +87,20 @@ def create_rawReads_folder(sampleNames):
             if sample not in sampleDir:
                 make_sure_path_exists('rawReads/'+sample)
             for r in reads:
+               r = reads_dir + '/' + r
                os.system('mv ' + '"' + r + '"' + ' rawReads/' + sample)
             sampleDir.append(sample)
 
-def read_sample_names():
+def read_sample_names(sample_names_file):
+    """ Read the sample_names_file and returns a list of sample names"""
     sampleNames = []
-    sample_names_file = open('sample_names.txt','r')
+    sample_names_file = open(sample_names_file,'r')
     for line in sample_names_file:
         sampleNames.append(line.strip())
     return(sampleNames)
 
 def check_gz(dir):
+    """ Determines if fastq files are gzipped and returns a gz variable which will be added as a suffiz when fastq files are called in further steps"""
     readFiles = []
     for root, dir, files in os.walk(dir):
         readFiles.extend(files)
@@ -100,20 +112,22 @@ def check_gz(dir):
     return(gz)
 
 def get_strand(strand):
+    """ Reads the strand information and returns the specific terms used in picard and htseq """
+
     if strand == 'NONE' or strand == 'FIRST_READ_TRANSCRIPTION_STRAND' or strand == 'SECOND_READ_TRANSCRIPTION_STRAND':
-        strand_piccard = strand
-        if strand_piccard == 'NONE':
+        strand_picard = strand
+        if strand_picard == 'NONE':
             strand_htseq = 'no'
-        elif strand_piccard == 'FIRST_READ_TRANSCRIPTION_STRAND':
+        elif strand_picard == 'FIRST_READ_TRANSCRIPTION_STRAND':
             strand_htseq = 'yes'
-        elif strand_piccard == 'SECOND_READ_TRANSCRIPTION_STRAND':
+        elif strand_picard == 'SECOND_READ_TRANSCRIPTION_STRAND':
             strand_htseq = 'reverse'
     elif strand == 'no' or strand == 'yes' or strand == 'reverse':
         strand_htseq = strand
         if strand_htseq == 'no':
-            strand_piccard = 'NONE'
+            strand_picard = 'NONE'
         elif strand_htseq == 'yes':
-            strand_piccard = 'FIRST_READ_TRANSCRIPTION_STRAND'
+            strand_picard = 'FIRST_READ_TRANSCRIPTION_STRAND'
         elif strand_htseq == 'reverse':
-            strand_piccard = 'SECOND_READ_TRANSCRIPTION_STRAND'
-    return([strand_piccard, strand_htseq])
+            strand_picard = 'SECOND_READ_TRANSCRIPTION_STRAND'
+    return([strand_picard, strand_htseq])
