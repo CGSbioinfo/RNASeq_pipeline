@@ -4,6 +4,7 @@ suppressMessages(library(reshape))
 
 indir = commandArgs(TRUE)[1]
 outdir= commandArgs(TRUE)[2]
+dir.create(outdir, recursive=TRUE, showWarnings=FALSE)
 files=list.files(indir, recursive=TRUE, pattern='fastqc_data.txt$')
 
 # Get table with number of reads #

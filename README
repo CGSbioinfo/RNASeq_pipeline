@@ -27,6 +27,8 @@ Note: some scripts are called from ~/bin, which means a copy should be stored th
  $ cp junctionPlotAll.R ~/bin 
 
 ##------------------------------------------------------------------------------##
+##------------------------------------------------------------------------------##
+
 
 # Converting bcl to fastq and creating working folder
 -----------------------------------------------------
@@ -56,9 +58,15 @@ ls NGS_J_Wang_40026B/* | sed 's/.*\///g' | sed 's/_R.*//g' | uniq |  parallel -j
 
 In any case, the fastq.gz files would be saved in the reads/ folder created in step 5, which is a subdirectory from the main working directory created in step 4. 
 
+
+##------------------------------------------------------------------------------##
 ##------------------------------------------------------------------------------##
 
+
 # Running the pipeline
+----------------------
+All the main python scripts have a help page, so if unsure on how to use it or require information about default and additional arguments, check. For example:
+  $ analysis_info.py -h 
 
 Setting up the analysis
 -----------------------
@@ -77,9 +85,12 @@ QC and trimming
 ---------------
 Run the following commands:
   $ qcReads.py --in_dir rawReads/ --out_dir rawReads/
-  $ fastqc_tables_all.py --in_dir rawReads/ --out_dir rawReads/ --suffix_name _raw --out_dir_plots Report/figure/rawQC --readType pairedEnd 
-  $ trimmingReads.py --in_dir rawReads/ --out_dir trimmedReads/
-  $ fastqc_tables_all.py --in_dir trimmedReads/ --out_dir trimmedReads/ --suffix_name _trimmed --out_dir_plots Report/figure/trimmedQC --readType pairedEnd
+
+  $ fastqc_tables_and plots.py --in_dir rawReads/ --out_dir rawReads/ --suffix_name _raw --out_dir_report Report/figure/rawQC --readType pairedEnd 
+
+  $ trimmingReads.py --in_dir rawReads/ --out_dir trimmedReads/ --ncores 9
+
+  $ fastqc_tables_and plots.py --in_dir trimmedReads/ --out_dir trimmedReads/ --suffix_name _trimmed --out_dir_report Report/figure/trimmedQC --readType pairedEnd
 
 Mapping and mapping QC
 ----------------------
