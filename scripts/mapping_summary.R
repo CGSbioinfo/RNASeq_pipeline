@@ -1,6 +1,7 @@
 #!/usr/local/bin/Rscript
 
 in_dir = commandArgs(TRUE)[1]
+out_dir = commandArgs(TRUE)[2]
 
 system(paste0("egrep -w \"Number of input reads | Uniquely mapped reads | Number of reads mapped to multiple loci | % of reads mapped to multiple loci |Number of reads mapped to too many loci | % of reads mapped to too many loci | % of reads unmapped: too many mismatches | % of reads unmapped: too short | % of reads unmapped: other | Uniquely mapped reads number | Number of splices:\" ", in_dir, "/*Log.final.out > star_logout.txt"))
 
@@ -29,7 +30,7 @@ out=as.data.frame(cbind(Uniquely_Mapped_pct=as.numeric(star[[15]][match(names, s
 			Mapped_num=as.numeric(star[[16]][match(names, star[[16]][,1]),3])))
 
 rownames(out)=names
-write.csv(out,"mapping_summary.csv", quote=FALSE)
+write.csv(out,paste0(out_dir,"/mapping_summary.csv"), quote=FALSE)
       
 
 x=read.table("star_logout.txt", stringsAsFactors=FALSE)
@@ -46,6 +47,6 @@ out=as.data.frame(cbind(Splices_num=as.numeric(star[[9]][match(names, star[[9]][
                         Annotated_splices_num=as.numeric(star[[4]][match(names, star[[4]][,1]),3])))
 names=gsub('Log.final.out:','',names)
 rownames(out)=names
-write.csv(out,"mapping_splices.csv", quote=FALSE)
+write.csv(out,paste0(out_dir,"mapping_splices.csv"), quote=FALSE)
                         
 system("rm star_logout.txt")

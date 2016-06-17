@@ -50,13 +50,13 @@ sheet is NGS_J_Wang_40026B.csv. You can find the index sequences in basespace.
   $ mv /mnt/cgs-fs3/Sequencing/NextSeq_Output/160601_NS500125_0267_AH53GHBGXY/ reads/
 
 Optional: 
-If the project had two or more runs and the aim is to merge them, you can use parallel.
+If the project had two or more runs and the aim is to merge the fastq files, you can use parallel.
 
 Example: 
 ls NGS_J_Wang_40026B/* | sed 's/.*\///g' | sed 's/_R.*//g' | uniq |  parallel -j 4 --no-notice "cat NGS_J_Wang_40026B/{}_R1_001.fastq.gz NGS_J_Wang_40026B_2/{}_R1_001.fastq.gz > {}_R1_001.fastq.gz"
 ls NGS_J_Wang_40026B/* | sed 's/.*\///g' | sed 's/_R.*//g' | uniq |  parallel -j 4 --no-notice "cat NGS_J_Wang_40026B/{}_R2_001.fastq.gz NGS_J_Wang_40026B_2/{}_R2_001.fastq.gz > {}_R2_001.fastq.gz"
 
-In any case, the fastq.gz files would be saved in the reads/ folder created in step 5, which is a subdirectory from the main working directory created in step 4. 
+In any case, the fastq.gz files should be saved in the reads/ folder created in step 5, which is a subdirectory from the main working directory created in step 4. 
 
 
 ##------------------------------------------------------------------------------##
@@ -86,19 +86,21 @@ QC and trimming
 Run the following commands:
   $ qcReads.py --in_dir rawReads/ --out_dir rawReads/
 
-  $ fastqc_tables_and plots.py --in_dir rawReads/ --out_dir rawReads/ --suffix_name _raw --out_dir_report Report/figure/rawQC --readType pairedEnd 
+  $ fastqc_tables_and_plots.py --in_dir rawReads/ --out_dir rawReads/ --suffix_name _raw --out_dir_report Report/figure/rawQC --readType pairedEnd 
 
   $ trimmingReads.py --in_dir rawReads/ --out_dir trimmedReads/ --ncores 9
 
-  $ fastqc_tables_and plots.py --in_dir trimmedReads/ --out_dir trimmedReads/ --suffix_name _trimmed --out_dir_report Report/figure/trimmedQC --readType pairedEnd
+  $ fastqc_tables_and_plots.py --in_dir trimmedReads/ --out_dir trimmedReads/ --suffix_name _trimmed --out_dir_report Report/figure/trimmedQC --readType pairedEnd
 
 Mapping and mapping QC
 ----------------------
 Run the following commands:
   $ mappingReads.py --in_dir trimmedReads/ --out_dir alignedReads/
-  $ mappingQC.py --in_dir alignedReads/ --out_dir alignedReads/QC/ --out_dir_plots Report/figure
+**We have observed that the mapping takes a long time when not run locally. You can run STAR locally by adding the argument --temp_dir <whatever_local_dir>. This will create a temp local folder as specifyied and run STAR. When the mapping is finished it will automatically move the results to the original working directory.
+
+  $ mappingQC.py --in_dir alignedReads/ --out_dir alignedReads/QC/ 
 
 Counting Reads
 --------------
 Run the following commands:
-  $ countingReads.py --in_dir alignedReads/ --out_dir alignedReads/ --mapping_summary_file mapping_summary.csv
+  $ countingReads.py --in_dir countedReads/ --out_dir countedReads/ 

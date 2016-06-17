@@ -10,15 +10,16 @@ suppressMessages(library(rtracklayer))
 suppressMessages(library(Rsamtools))
 suppressMessages(require(grid))
 
-outdir = commandArgs(TRUE)[1]
-mapping_sum = commandArgs(TRUE)[2]
+indir = commandArgs(TRUE)[1]
+outdir = commandArgs(TRUE)[2]
+mapping_sum = commandArgs(TRUE)[3]
 
 ###############################
 # Reading counted reads files #
 ###############################
 
 #setwd(outdir)
-files=list.files(outdir, pattern = "_count.txt", full.names=TRUE)
+files=list.files(indir, pattern = "_count.txt", full.names=TRUE)
 
 data=read.table(files[1], row.names=1)
 colnames(data)=files[1]

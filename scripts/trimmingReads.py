@@ -60,10 +60,11 @@ if __name__ == '__main__':
     # Detect if files are gz
     gz = functions.check_gz(in_dir)
 
+    # Run trimm galore
     functions.make_sure_path_exists(out_dir)
     Parallel(n_jobs=7)(delayed(trimming)(i) for i in sampleNames)
-    
     functions.make_sure_path_exists(out_dir_report)
+    
     # Nreads
     os.system("Rscript /usr/local/bin/trimming_summary.R " + in_dir + " " + out_dir + " " + out_dir_report )
 
