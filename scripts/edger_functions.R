@@ -64,14 +64,14 @@ multipleComparison=function(data,comparison,pairedDesign, min.count, min.nsample
     
     # scatter plot
     y = cpm(dge,prior.count = 1, log=TRUE)
-    png(paste0(outdir,'/',newd,'/ScatterPlot_', newd, ".png"), width = 1360, height = 1360)
-    pairs.panels(y, smooth=FALSE)
-    dev.off()
+    #png(paste0(outdir,'/',newd,'/ScatterPlot_', newd, ".png"), width = 1360, height = 1360)
+    #pairs.panels(y, smooth=FALSE)
+    #dev.off()
     
     # Dispersion
     if (pairedDesign==TRUE){
       sibship=factor(temp_sample_info$Sibship)
-      treatment=factor(temp_sample_info$Group)
+      treatment=factor(temp_sample_info$Group, levels=c(temp_comparison))
       design<-model.matrix(~sibship+treatment)
       dge<-estimateGLMCommonDisp(dge, design)
       dge<-estimateGLMTrendedDisp(dge, design)
@@ -120,6 +120,14 @@ multipleComparison=function(data,comparison,pairedDesign, min.count, min.nsample
       abline(h = c(-1, 1), col = "blue")
       dev.off()
     }
+
+    pdf(paste0(outdir, '/',newd,'/pval_hist_', newd, ".pdf"))
+    hist(results$PValue, breaks=100)
+    dev.off()
+
+    
+
+
   }
   summ=cbind(significant01,significant05)
   colnames(summ)=c('p<0.01',"p<0.05")

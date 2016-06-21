@@ -65,7 +65,7 @@ In any case, the fastq.gz files should be saved in the reads/ folder created in 
 
 # Running the pipeline
 ----------------------
-All the main python scripts have a help page, so if unsure on how to use it or require information about default and additional arguments, check. For example:
+Important note: All the main python scripts have a help page, so if unsure on how to use it or require information about default and additional arguments, check. For example:
   $ analysis_info.py -h 
 
 Setting up the analysis
@@ -103,4 +103,35 @@ Run the following commands:
 Counting Reads
 --------------
 Run the following commands:
-  $ countingReads.py --in_dir countedReads/ --out_dir countedReads/ 
+  $ countingReads.py --in_dir countedReads/ --out_dir countedReads/
+
+
+Differential expression
+-----------------------
+This section is currently done using edgeR. 
+DESeq2 is used only to do a PCA using rlog values. 
+
+There are 4 files needed:
+1. deseq2_arguments.txt
+2. edger_arguments.txt
+3. sample_info.txt
+4. comparisons.csv
+
+To create these files run:
+  $ differential_expression.py --deseq2_arguments deseq2_arguments.txt --edger_arguments edger_arguments.txt --sample_info sample_info.txt --comparisons comparisons.csv
+
+Then, fill the files with the corresponding information. 
+
+Next, create the PCA using DESeq2:
+ $ Rscript /usr/local/bin/deseq2.R deseq2_arguments.txt
+
+Next, run edgeR:
+ $ Rscript /usr/local/bin/edger.R edger_arguments.txt
+
+The output of the above scripts will be wherever it was indicated in the *_arguments file. 
+
+If you want to change the arguments, like paired/non-paired design, or test a different min counts to filter genes, you can create a second arguments file with a different name, to keep record of both:
+  $ differential_expression.py --edger_arguments edger_arguments_paired.txt
+
+
+

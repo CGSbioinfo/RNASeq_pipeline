@@ -8,14 +8,25 @@ suppressMessages(library(ggplot2))
 #suppressMessages(library(vsn))
 source("/usr/local/bin/deseq2_functions.R")
 
-indir = commandArgs(TRUE)[1]
-outdir = commandArgs(TRUE)[2]
-sample_info = commandArgs(TRUE)[3]
-comparisons = commandArgs(TRUE)[4]
-design = commandArgs(TRUE)[5]
-gtf.file= commandArgs(TRUE)[6]
 
-dir.create(outdir, showWarnings = FALSE)
+# Read arguments from standard file
+arguments_file = commandArgs(TRUE)[1]
+arguments_file=read.csv(arguments_file, header=FALSE)
+
+read_args_line=function(x){
+  x=gsub(' *$', '',x)
+  x=gsub('.*=', '',x)
+  x=gsub('^ ','',x)
+  return(x)
+}
+indir=read_args_line(grep('^indir =', arguments_file$V1, value=TRUE))
+outdir=read_args_line(grep('^outdir =', arguments_file$V1, value=TRUE))
+sample_info=read_args_line(grep('^sample_info =', arguments_file$V1, value=TRUE))
+comparisons=read_args_line(grep('^comparisons =', arguments_file$V1, value=TRUE))
+design=read_args_line(grep('^design =', arguments_file$V1, value=TRUE))
+gtf.file=read_args_line(grep('^gtfFile =', arguments_file$V1, value=TRUE))
+
+dir.create(outdir, recursive=TRUE, showWarnings = FALSE)
 
 # Reading counted reads files #
 #-----------------------------#
@@ -91,26 +102,25 @@ pdf(paste0(outdir,'/PCA_allSamples',".pdf"), width=9,height=9)
 ggplot(pca_data, aes(PC1,PC2, color=Group, label=rownames(pca_data))) + geom_point() + geom_text(show_guide=F) + 
   xlab(paste0('PC1: ', percentVar[1], '% variance'))  + ylab(paste0('PC2: ', percentVar[2], '% variance')) + 
   theme(panel.background=element_rect(fill='white'), panel.grid.major=element_line(colour='grey',size=.3,linetype=2), 
-        panel.grid.minor=element_line(colour='grey',size=.3,linetype=2)) + xlim(range(pca_data$PC1)[1]-3, 
-                                                                                range(pca_data$PC1)[2]+3)
-dev.off()
+        panel.grid.minor=element_line(colour='grey',size=.3,linetype=2))
+dev.off()                                                      
 #pdf(paste0(outdir,'/PCA_allSamples', ".pdf"), width=9,height=9)
 #plotPCA(rld, intgroup=c('Group'))
 #dev.off()
 
 #Libsize
-pdf(paste0(outdir,'/Libsize', ".pdf"), width=9)
-par(mar=c(12.8,5.1,4.1,2.1))
-barplot(colSums(counts(dds, normalize=FALSE)), names=colnames(counts(dds, normalize=FALSE)), las=2, ylab="") # library sizes
-dev.off()
+#pdf(paste0(outdir,'/Libsize', ".pdf"), width=9)
+#par(mar=c(12.8,5.1,4.1,2.1))
+#barplot(colSums(counts(dds, normalize=FALSE)), names=colnames(counts(dds, normalize=FALSE)), las=2, ylab="") # library sizes
+#dev.off()
 
 # Doing Differential Gene Expression  #
 #-------------------------------------#
-comparisons=read.csv(comparisons, header=TRUE)
-if (design=='pairedSamples'){
-  pairedDesign=TRUE
-} else if(design=='non-pairedSamples'){
-  pairedDesign=FALSE
-}
+#comparisons=read.csv(comparisons, header=TRUE)
+#if (design=='pairedSamples'){
+#  pairedDesign=TRUE
+#} else if(design=='non-pairedSamples'){
+#  pairedDesign=FALSE
+#}
 
-multipleComparison(data,comparisons,pairedDesign, gtf.file)
+#multipleComparison(data,comparisons,pairedDesign, gtf.file)

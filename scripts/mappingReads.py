@@ -57,7 +57,8 @@ if __name__ == '__main__':
     args=parser.parse_args()
 
     params_file=args.analysis_info_file
-    path=functions.read_analysis_info_file(params_file)['Working directory']
+    #path=functions.read_analysis_info_file(params_file)['Working directory']
+    path=os.getcwd()
     refGenome=functions.read_analysis_info_file(params_file)['Reference Genome']
     os.chdir(path)
 

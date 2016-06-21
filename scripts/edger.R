@@ -6,16 +6,27 @@ suppressMessages(library(rtracklayer))
 suppressMessages(library(GGally))
 source("/usr/local/bin/edger_functions.R")
 
-indir = commandArgs(TRUE)[1]
-outdir = commandArgs(TRUE)[2]
-sample_info = commandArgs(TRUE)[3]
-comparisons = commandArgs(TRUE)[4]
-min.count = as.numeric(commandArgs(TRUE)[5]) # filtering: minimun number of reads a gene should have to be considered as expressed
-min.nsamples = as.numeric(commandArgs(TRUE)[6]) # filtering: minimum number of samples having a gene expressed
-design = commandArgs(TRUE)[7]
-gtf.file= commandArgs(TRUE)[8]
+# Read arguments from standard file
+arguments_file = commandArgs(TRUE)[1]
+arguments_file=read.csv(arguments_file, header=FALSE)
 
-dir.create(outdir, showWarnings = FALSE)
+read_args_line=function(x){
+  x=gsub(' *$', '',x)
+  x=gsub('.*=', '',x)
+  x=gsub('^ ','',x)
+  return(x)
+}
+indir=read_args_line(grep('^indir =', arguments_file$V1, value=TRUE))
+outdir=read_args_line(grep('^outdir =', arguments_file$V1, value=TRUE))
+sample_info=read_args_line(grep('^sample_info =', arguments_file$V1, value=TRUE))
+comparisons=read_args_line(grep('^comparisons =', arguments_file$V1, value=TRUE))
+min.count=as.numeric(read_args_line(grep('^min.count =', arguments_file$V1, value=TRUE)))
+min.nsamples=as.numeric(read_args_line(grep('^min.nsamples =', arguments_file$V1, value=TRUE)))
+design=read_args_line(grep('^design =', arguments_file$V1, value=TRUE))
+gtf.file=read_args_line(grep('^gtfFile =', arguments_file$V1, value=TRUE))
+
+dir.create(outdir, recursive=TRUE, showWarnings = FALSE)
+
 
 # Reading counted reads files #
 #-----------------------------#
@@ -44,7 +55,6 @@ data.notcounted=data[which(rownames(data)=='__no_feature'):dim(data)[1],]
 data=data[-c(which(rownames(data)=='__no_feature'):dim(data)[1]),]
 total.data.counted=colSums(data)
 
-#data=data[-which(rownames(data)=='ENSMUSG00000106106'),]
 # Getting information about the groups #
 #--------------------------------------#
 sample_info = read.csv(sample_info)

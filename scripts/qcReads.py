@@ -44,7 +44,8 @@ if __name__ == '__main__':
 
     # Set path of working directory
     params_file=args.analysis_info_file
-    path=functions.read_analysis_info_file(params_file)['Working directory']
+    #path=functions.read_analysis_info_file(params_file)['Working directory']
+    path=os.getcwd()
     os.chdir(path)
     
     #Ncores
