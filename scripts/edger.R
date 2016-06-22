@@ -3,7 +3,7 @@
 suppressMessages(library(edgeR))
 suppressMessages(library(gplots))
 suppressMessages(library(rtracklayer))
-suppressMessages(library(GGally))
+#suppressMessages(library(GGally))
 source("/usr/local/bin/edger_functions.R")
 
 # Read arguments from standard file

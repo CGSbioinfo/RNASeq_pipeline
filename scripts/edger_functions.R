@@ -1,7 +1,7 @@
 suppressMessages(library(edgeR))
 suppressMessages(library(gplots))
 suppressMessages(library(rtracklayer))
-suppressMessages(library(GGally))
+#suppressMessages(library(GGally))
 
 
 multipleComparison=function(data,comparison,pairedDesign, min.count, min.nsamples, gtf.file){
@@ -64,9 +64,9 @@ multipleComparison=function(data,comparison,pairedDesign, min.count, min.nsample
     
     # scatter plot
     y = cpm(dge,prior.count = 1, log=TRUE)
-    #png(paste0(outdir,'/',newd,'/ScatterPlot_', newd, ".png"), width = 1360, height = 1360)
-    #pairs.panels(y, smooth=FALSE)
-    #dev.off()
+    png(paste0(outdir,'/',newd,'/ScatterPlot_', newd, ".png"), width = 1360, height = 1360)
+    pairs.panels(y, smooth=FALSE)
+    dev.off()
     
     # Dispersion
     if (pairedDesign==TRUE){

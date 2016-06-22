@@ -1,7 +1,7 @@
 suppressMessages(library(DESeq2))
 suppressMessages(library(gplots))
 suppressMessages(library(rtracklayer))
-suppressMessages(library(GGally))
+#suppressMessages(library(GGally))
 suppressMessages(library(ggplot2))
 #suppressMessages(library(vsn))
 
