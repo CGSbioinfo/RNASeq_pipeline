@@ -67,4 +67,4 @@ if __name__ == '__main__':
     # Create plots
     functions.make_sure_path_exists(out_dir_report)
     Parallel(n_jobs=8)(delayed(plots)(i) for i in sampleNames)
-    os.system('Rscript /usr/local/bin/fastqc_plots_all_part2.R ' + in_dir + ' ' + 'sample_names.txt' + ' ' + readType + ' ' + out_dir_report + ' ' + suffix_name  )
+    os.system('Rscript /usr/local/bin/fastqc_plots_all_part2.R ' + in_dir + ' ' + sample_names_file + ' ' + readType + ' ' + out_dir_report + ' ' + suffix_name  )
