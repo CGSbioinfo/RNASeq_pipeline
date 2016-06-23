@@ -4,7 +4,7 @@ This second version will be adapted and tested for the cluster.
 
 Software and scripts required
 Make sure the following software is installed: FastQC, Trim Galore, STAR, HTSeq, 
-R, edgeR, RSeQC, Piccard Tools, samtools. 
+R, edgeR, RSeQC, Picard Tools, samtools. 
 
 The python main script calls other scripts, make sure they are available from 
 the $PATH: functions.py, analysis_info.py, organizeWorkingDirectory.py, qcReads.py, 
@@ -20,7 +20,6 @@ mapping_distribution.R, junctionPlotAll.R, countingReads.py, countsLog_rnaseq.R.
  $ cd RNASeq_pipeline/scripts
  $ for i in $(ls *); do cp $i /usr/local/bin; done # NEED SUDO!!
  $ for i in $(ls *); do chmod 777 /usr/local/bin/$i; done # NEED SUDO!
- $ cp junctionPlotAll.R ~/bin 
 
 ##------------------------------------------------------------------------------##
 ##------------------------------------------------------------------------------##
@@ -126,7 +125,7 @@ Next, run edgeR:
 
 The output of the above scripts will be wherever it was indicated in the *_arguments file. 
 
-If you want to change the arguments, like paired/non-paired design, or test a different min counts to filter genes, you can create a second arguments file with a different name, to keep record of both:
+If you want to change the arguments, like paired/non-paired design, or test a different min counts to filter genes, you can create a second arguments file with a different name to keep record of both:
   $ differential_expression.py --edger_arguments edger_arguments_paired.txt
 
 

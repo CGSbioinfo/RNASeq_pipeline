@@ -134,6 +134,109 @@ multipleComparison=function(data,comparison,pairedDesign, min.count, min.nsample
   write.csv(summ,paste0(outdir,"/significant_summ.csv"),quote=F)  
 }
 
+multipleComparison_no_replicates=function(data,comparison,pairedDesign, min.count, min.nsamples, gtf.file){
+  # Initialize vector to record number of DE genes
+  significant01=c()
+  significant05=c()
+  
+  # Get annotation
+  GTF <- import.gff(gtf.file, format="gtf", feature.type="gene")
+  df=GTF$gene_name
+  names(df)=GTF$gene_id
+  
+  for (i in 1:nrow(comparisons)){
+    
+    # Subset data and setup environment
+    temp_comparison=c(as.character(comparisons[i,1]), as.character(comparisons[i,2]))
+    temp_sample_info=sample_info[which(sample_info$Group %in% temp_comparison),]
+    temp_sample_info=droplevels(temp_sample_info)
+    temp_data=data[,which(colnames(data)%in%temp_sample_info$SampleID)]
+    temp_data=temp_data[!rowSums(temp_data)==0,]
+    group=group <- c(as.character(temp_sample_info$Group))
+    newd=paste0(temp_comparison, collapse = "__VS__")
+    dir.create(paste0(outdir,'/',newd), showWarnings=FALSE)
+    
+    dge <- DGEList(counts=temp_data, group=group)
+    
+    # Filtering dge #
+    #---------------#
+    if (!min.count==0){
+      # Calculating the filtering threshold #
+      #-------------------------------------#
+      smallest_lib=min(dge$samples$lib.size)
+      smallest_lib_pm=smallest_lib/1000000
+      min.cpm=min.count/smallest_lib_pm
+      keep <- rowSums(cpm(dge)>min.cpm) >= min.nsamples
+      dge <- dge[keep,]
+      dge$samples$lib.size <- colSums(dge$counts)
+    }
+    
+    # Normalizing dge #
+    #-----------------#
+    dge <- calcNormFactors(dge)
+    
+    # Exploring data  #
+    #-----------------#
+    
+    # Heatmap
+    y = cpm(dge,prior.count = 1, log=TRUE)
+    pdf(paste0(outdir,'/',newd,'/Heatmap_', newd, ".pdf"))
+    heatmap.2(cor(y),scale=c('none'), density.info='density', trace='none')
+    dev.off()
+    
+    # scatter plot
+    y = cpm(dge,prior.count = 1, log=TRUE)
+    png(paste0(outdir,'/',newd,'/ScatterPlot_', newd, ".png"), width = 1360, height = 1360)
+    pairs.panels(y, smooth=FALSE)
+    dev.off()
+    
+    # Differential Expression
+    y = cpm(dge, log=TRUE, prior.count=1)
+    print(head(y))
+    logfc=y[,2]/y[,1]
+    names(logfc)=rownames(y)
+    logfc=logfc[order(abs(logfc), decreasing=TRUE)]
+    detags <- names(logfc) # chech individual cpm values for top genes
+    results = cbind(logfc,cpm(dge,log=TRUE, prior.count=1)[detags,]) # chech individual cpm values for top genes
+    print(head(cpm(dge,log=FALSE)[detags,]))
+    results=cbind(GeneName=df[rownames(results)], results)
+    write.csv(results,paste0(outdir, '/',newd,'/Results_', newd, ".csv"))
+    
+    q()
+    #significant01=c(significant01, table(results$FDR<0.01)["TRUE"])
+    #names(significant01)[i]=newd
+    #significant05=c(significant05, table(results$FDR<0.05)["TRUE"])
+    #names(significant05)[i]=newd
+    
+    #if (pairedDesign==TRUE){
+    #  de <- decideTestsDGE(lrt, p=0.05, adjust="BH") # total number of DE genes at 5% FDR
+    #  detags <- rownames(dge)[as.logical(de)]
+    #  pdf(paste0(outdir, '/',newd,'/MAplot_', newd, ".pdf"))
+    #  plotSmear(lrt, de.tags=detags)
+    #  abline(h = c(-1, 1), col = "blue")
+    #  dev.off()
+    #} else {
+    #  de <- decideTestsDGE(et, p=0.05, adjust="BH") # total number of DE genes at 5% FDR
+    #  detags <- rownames(dge)[as.logical(de)]
+    #  pdf(paste0(outdir, '/',newd,'/MAplot_', newd, ".pdf"))
+    #  plotSmear(et, de.tags=detags)
+    #  abline(h = c(-1, 1), col = "blue")
+    #  dev.off()
+    #}
+
+    #pdf(paste0(outdir, '/',newd,'/pval_hist_', newd, ".pdf"))
+    #hist(results$PValue, breaks=100)
+    #dev.off()
+
+    
+
+
+  }
+  summ=cbind(significant01,significant05)
+  colnames(summ)=c('p<0.01',"p<0.05")
+  write.csv(summ,paste0(outdir,"/significant_summ.csv"),quote=F)  
+}
+
 ########### scatterplots
 panel.cor.scale <- function(x, y, digits=2, prefix="")
 {

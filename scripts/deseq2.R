@@ -72,12 +72,19 @@ data=data[,match(as.character(sample_info$SampleID),colnames(data))]
 colData<-data.frame(Group=sample_info$Group)
 rownames(colData)=sample_info$SampleID
 
-dds <- DESeqDataSetFromMatrix(countData= data, colData=colData, design= ~Group)
+if (length(colData$Group)==length(unique(colData$Group))){
+  print('No replicate analysis')
+  dds <- DESeqDataSetFromMatrix(countData= data, colData=colData, design= ~1)
+} else {
+  dds <- DESeqDataSetFromMatrix(countData= data, colData=colData, design= ~Group)
+}
+#q()
+#dds <- DESeqDataSetFromMatrix(countData= data, colData=colData, design= ~Group)
 
 # Prefiltering
 dds <- dds[rowSums(counts(dds)) > 1, ]
 dds <- DESeq(dds)
-
+print(dds)
 # Exploring data  #
 #-----------------#
 # Transforming values

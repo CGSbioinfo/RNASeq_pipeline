@@ -136,4 +136,9 @@ if (design=='pairedSamples'){
   pairedDesign=FALSE
 }
 
-multipleComparison(data,comparisons,pairedDesign, min.count, min.nsamples, gtf.file)
+if (length(sample_info$Group)==length(unique(sample_info$Group))){
+  print('No replicate analysis')
+  multipleComparison_no_replicates(data,comparisons,pairedDesign, min.count, min.nsamples, gtf.file)
+} else {
+  multipleComparison(data,comparisons,pairedDesign, min.count, min.nsamples, gtf.file)
+}
