@@ -71,17 +71,6 @@ data_all_samples=data[!rowSums(data)==0,]
 #--------------------------------------------------#
 dge <- DGEList(counts=data_all_samples, group=group)
 
-# Looking at mds before filtering
-dge.temp <- calcNormFactors(dge)
-mycoldf=cbind(unique(as.character(dge.temp$samples$group)),1:length(unique(as.character(dge.temp$samples$group))))
-mycol=c()
-for (i in 1:length(as.character(dge.temp$samples$group))){
-  mycol=c(mycol,mycoldf[which(mycoldf[,1]==as.character(dge.temp$samples$group)[i]),2])
-}
-pdf(paste0(outdir,'/mds_normalised_noFiltering', ".pdf"))
-plotMDS(dge.temp, col=mycol, method="bcv", pch=19)
-dev.off()
-
 # Filter low counts genes #
 #-------------------------#
 keep <- rowSums(cpm(dge)>min.cpm) >= min.nsamples
