@@ -63,7 +63,9 @@ matrix=matrix[-which(rowSums(matrix)==0),]
 matrix.melt=melt(matrix)
 colnames(matrix.melt)[2]='Sample'
 pdf(paste0(outdir,'/biotype_proportion.pdf'),width=12, height=7)
-ggplot(matrix.melt, aes(x=X1, y=value, colour=Sample, shape=Sample)) + geom_point(size=1) + theme(axis.text.x=element_text(angle=90), axis.text=element_text(size=10, colour='black'), axis.title.x=element_blank(), legend.text=element_text(size=8)) + scale_shape_manual(values=0:ncol(data)) + ylab('Library Proportion')
+ggplot(matrix.melt, aes(x=X1, y=value, colour=Sample, shape=Sample)) + geom_point(size=1) + 
+theme(axis.text.x=element_text(angle=90), axis.text=element_text(size=10, colour='black'), axis.title.x=element_blank(), legend.text=element_text(size=8)) + 
+scale_shape_manual(values=0:ncol(data)) + ylab('Library Proportion')
 dev.off()
 
 # Library proportion #
@@ -75,6 +77,7 @@ prop.adjusted=prop/df$width
 #boxplot(prop.adjusted)
 
 genes_most_expressed=sapply(1:ncol(prop.adjusted),function(x){which(prop.adjusted[,x]>.0000002)})
+print(head(genes_most_expressed))
 #names(genes_most_expressed)=colnames(prop.adjusted)
 #genes_most_expressed=lapply(genes_most_expressed, function(x){df[names(x),]})
 #genes_most_expressed=lapply(names(genes_most_expressed),function(x){cbind(genes_most_expressed[[x]],prop=prop[rownames(genes_most_expressed[[x]]),x])})

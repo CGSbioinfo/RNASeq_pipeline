@@ -20,7 +20,7 @@ indir=read_args_line(grep('^indir =', arguments_file$V1, value=TRUE))
 outdir=read_args_line(grep('^outdir =', arguments_file$V1, value=TRUE))
 sample_info=read_args_line(grep('^sample_info =', arguments_file$V1, value=TRUE))
 comparisons=read_args_line(grep('^comparisons =', arguments_file$V1, value=TRUE))
-min.count=as.numeric(read_args_line(grep('^min.count =', arguments_file$V1, value=TRUE)))
+min.cpm=as.numeric(read_args_line(grep('^min.cpm =', arguments_file$V1, value=TRUE)))
 min.nsamples=as.numeric(read_args_line(grep('^min.nsamples =', arguments_file$V1, value=TRUE)))
 design=read_args_line(grep('^design =', arguments_file$V1, value=TRUE))
 gtf.file=read_args_line(grep('^gtfFile =', arguments_file$V1, value=TRUE))
@@ -82,25 +82,15 @@ pdf(paste0(outdir,'/mds_normalised_noFiltering', ".pdf"))
 plotMDS(dge.temp, col=mycol, method="bcv", pch=19)
 dev.off()
 
-# Calculating the filtering threshold #
-#-------------------------------------#
-if (!min.count==0){
-  smallest_lib=min(dge$samples$lib.size)
-  smallest_lib_pm=smallest_lib/1000000
-  min.cpm=min.count/smallest_lib_pm
-# Filtering dge #
-#---------------#
-  keep <- rowSums(cpm(dge)>min.cpm) >= min.nsamples
-  dge.all.samples <- dge[keep,]
-  dge.all.samples$samples$lib.size <- colSums(dge.all.samples$counts)
-} else {
-  dge.all.samples <- dge
-}
+# Filter low counts genes #
+#-------------------------#
+keep <- rowSums(cpm(dge)>min.cpm) >= min.nsamples
+dge.all.samples <- dge[keep,]
+dge.all.samples$samples$lib.size <- colSums(dge.all.samples$counts)
 
 # Normalizing dge #
 #-----------------#
 dge.all.samples <- calcNormFactors(dge.all.samples)
-
 
 # Exploring data  #
 #-----------------#

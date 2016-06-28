@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
 	if args.edger_arguments:
 		outfile_name=args.edger_arguments
-		lines=['indir = ', 'outdir = ', 'sample_info = ', 'comparisons = ', 'min.count = ', 'min.nsamples = ' ,'design = ', 'gtfFile = ']
+		lines=['indir = ', 'outdir = ', 'sample_info = ', 'comparisons = ', 'min.cpm = ', 'min.nsamples = ' ,'design = ', 'gtfFile = ']
 		outfile=open(outfile_name,'w')
 		for l in lines:
 			outfile.write(l + '\n')
