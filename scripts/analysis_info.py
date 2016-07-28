@@ -13,9 +13,15 @@ import multiprocessing
 import subprocess
 sys.path.insert(0,'/usr/local/bin/')
 import functions
+import argparse
 
+__version__ = 'v02'
 
 if __name__ == '__main__':
+    parser=argparse.ArgumentParser(prog='analysis_info.py')
+    parser.add_argument('-v','--version',action='version',version='%(prog)s-'+__version__)
+    args=parser.parse_args()
+
     try: 
         outfile_name=sys.argv[1]
     except:

@@ -21,22 +21,25 @@ def tables(i):
 
 def plots(i):
     #outdir = re.sub('fastqc_data.txt', '', i)
-    os.system('Rscript /usr/local/bin/fastqc_plots_all.R ' + in_dir + ' ' + i + ' ' + readType + ' ' + out_dir_report + ' ' + suffix_name  )
+    os.system('Rscript /usr/local/bin/fastqc_plots_all.R ' + in_dir + ' ' + i + ' ' + readType + ' ' + out_dir_report + ' ' + suffix_name + ' ' + args.plot_device)
 
 
 ##############################################################
 
+__version__ = 'v02'
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description = 'Generates tables used for FastQC plots')
+    parser = argparse.ArgumentParser(prog='fastqc_tables_and_plots.py', description = 'Generates tables used for FastQC plots')
+    parser.add_argument('-v','--version', action='version', version='%(prog)s-'+__version__)
     parser.add_argument('--analysis_info_file', help='Text file with details of the analysis. Default=analysis_info.txt', default='analysis_info.txt')
     parser.add_argument('--in_dir', help='Path to folder containing fastq files. Default=rawReads/', default='rawReads')
     parser.add_argument('--out_dir', help='Path to out put folder. Default=rawReads/', default='rawReads')
     parser.add_argument('--readType', help='Read Type: pairedEnd or singleEnd. Default=pairedEnd', default='pairedEnd')
     parser.add_argument('--out_dir_report', help='Path to out put folder. Default=Report/figure', default='Report/figure')
-    parser.add_argument('--suffix_name', help='Suffix to optionally put to the output name. Default=', default='')
+    parser.add_argument('--suffix_name', help='Suffix to optionally put to the output name. Default=', default='_plot')
     parser.add_argument('--sample_names_file', help='Text file with sample names. Default=sample_names_info.txt', default='sample_names.txt')
+    parser.add_argument('--plot_device', action='store', help='Specify the format of the plot output. Default=png', default='png')
     parser.add_argument('--ncores', help='Number of cores to use. Default=8', default='8')
     args=parser.parse_args()
 
@@ -67,4 +70,4 @@ if __name__ == '__main__':
     # Create plots
     functions.make_sure_path_exists(out_dir_report)
     Parallel(n_jobs=8)(delayed(plots)(i) for i in sampleNames)
-    os.system('Rscript /usr/local/bin/fastqc_plots_all_part2.R ' + in_dir + ' ' + sample_names_file + ' ' + readType + ' ' + out_dir_report + ' ' + suffix_name  )
+    os.system('Rscript /usr/local/bin/fastqc_plots_all_part2.R ' + in_dir + ' ' + sample_names_file + ' ' + readType + ' ' + out_dir_report + ' ' + suffix_name + ' ' + args.plot_device)

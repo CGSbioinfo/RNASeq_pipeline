@@ -36,7 +36,6 @@ def picard_collect_metrics(i):
         " INPUT=" + in_dir + "/" + bamfiles +  
         " OUTPUT=" + out_dir + "/" + i + "_metrics.txt")
 
-
 def pct(i):
     os.system('mapping_distribution.R ' + out_dir + '/ ' + i)
 
@@ -87,17 +86,17 @@ if __name__ == '__main__':
 
     # Gene body coverage
     os.system("ls " + in_dir + "/*Aligned.sortedByCoord.out.bam > tempbamfiles.txt")
-    os.system("python /usr/local/miniconda/bin/geneBody_coverage.py -r " + bedFile_10k + " -i tempbamfiles.txt -o " + out_dir + "/10KGenes")
+    os.system("/usr/local/minicondaexport/bin/geneBody_coverage.py -r " + bedFile_10k + " -i tempbamfiles.txt -o " + out_dir + "/10KGenes")
     os.system("rm tempbamfiles.txt")
     os.system('cp ' + out_dir + '/10KGenes.geneBodyCoverage.curves.pdf ' + out_dir_report + '/10KGenes_geneBodyCoverage_curves.pdf')
 
     # Junction QC
-    Parallel(n_jobs=ncores)(delayed(junctions)(i) for i in sampleNames)
-    os.system('grep "y=c(" ' + out_dir + '/*junctionSaturation*  | sed \'s/:y=c(/,/g\' | sed \'s/.junctionSaturation_plot.r//g\' | sed \'s/)//g\' | sed \"s/.*\///g\"  > ' + out_dir + '/junctionSat_all.csv')
-    os.system('Rscript ~/bin/junctionPlotAll.R ' + out_dir + ' ' + out_dir)
-    os.system('cp ' + out_dir + '/junctionSaturationAll.pdf ' + out_dir_report)
+    #Parallel(n_jobs=ncores)(delayed(junctions)(i) for i in sampleNames)
+    #os.system('grep "y=c(" ' + out_dir + '/*junctionSaturation*  | sed \'s/:y=c(/,/g\' | sed \'s/.junctionSaturation_plot.r//g\' | sed \'s/)//g\' | sed \"s/.*\///g\"  > ' + out_dir + '/junctionSat_all.csv')
+    #os.system('Rscript ~/bin/junctionPlotAll.R ' + out_dir + ' ' + out_dir)
+    #os.system('cp ' + out_dir + '/junctionSaturationAll.pdf ' + out_dir_report)
 
-    # Piccard tools
+    # Picard tools
     Parallel(n_jobs=ncores)(delayed(picard_collect_metrics)(i) for i in sampleNames)
     Parallel(n_jobs=ncores)(delayed(pct)(i) for i in sampleNames)
     os.system('Rscript /usr/local/bin/read_distribution_genomic_context.R ' + out_dir + ' ' + out_dir_report )

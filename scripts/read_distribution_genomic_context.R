@@ -40,7 +40,7 @@ m=m[-grep('STRAND',m[,1]),]
 m=m[-grep('USABLE',m[,1]),]
 m=m[-grep('MRNA',m[,1]),]
 pdf(paste0(out_dir,"/read_distribution_genomic_context.pdf"), width=10)
-ggplot(m, aes(x=factor(variable),y=value, fill=cat)) + geom_bar(width=0.5, stat="identity") + coord_flip() + theme(axis.text.y = element_text(color='black'), axis.text.x = element_text(color='black'), axis.title.y=element_blank(), axis.title.x=element_blank())
+ggplot(m, aes(x=factor(variable),y=value, fill=cat)) + geom_bar(width=0.5, stat="identity") + coord_flip() + theme(axis.text.y = element_text(color='black'), axis.text.x = element_text(color='black'), axis.title.y=element_blank(), axis.title.x=element_blank(), legend.title=element_blank())  
 dev.off()
 
 # Table of strand accuracy

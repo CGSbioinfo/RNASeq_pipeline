@@ -15,10 +15,13 @@ sys.path.insert(0,'/usr/local/bin/')
 import functions
 import argparse
 
+__version__='v02'
+
 if __name__ == '__main__':
 
     # Parser
-    parser = argparse.ArgumentParser(description = 'Organize working directory of the analysis')
+    parser = argparse.ArgumentParser(prog='organizeWorkingDirectory.py',description = 'Organize working directory of the analysis')
+    parser.add_argument('-v','--version', action='version',version='%(prog)s-'+__version__)
     parser.add_argument('--analysis_info_file', help='Text file with details of the analysis. Default=analysis_info.txt', default='analysis_info.txt')
     parser.add_argument('--sample_names_file', help='Text file with sample names. Default=sample_names_info.txt', default='sample_names.txt')
     args=parser.parse_args()

@@ -10,6 +10,7 @@ sample_names=commandArgs(TRUE)[2]
 readType=commandArgs(TRUE)[3]
 outdir=commandArgs(TRUE)[4]
 suffix=commandArgs(TRUE)[5]
+plot_device=commandArgs(TRUE)[6]
 if (is.na(suffix)){
   suffix=''
 }
@@ -61,7 +62,7 @@ if (readType=='pairedEnd') {
            legend.key.height=unit(.8,"line"), axis.title.y=element_blank()) + ylab("") + xlab('Mean Quality score') + scale_shape_manual(values=1:length(unique(d$Sample)))
 }
 
-ggsave(filename=paste0(outdir,'/per_sequence_quality_scores', suffix, '.png'), width=10, height=3.5, units='in', plot=p)
+ggsave(filename=paste0(outdir,'/per_sequence_quality_scores', suffix, '.', plot_device), width=10, height=3.5, units='in', plot=p)
 
 
 # Per sequence gc content
@@ -104,7 +105,7 @@ if (readType=='pairedEnd') {
     xlab('%GC') + ylab('') + theme(legend.key.height=unit(.8,"line")) +  scale_shape_manual(values=1:length(unique(d$Sample)))
 
 }
-ggsave(filename=paste0(outdir,'/per_sequence_gc_content', suffix, '.png'), width=10, height=3.5, units='in', plot=p)
+ggsave(filename=paste0(outdir,'/per_sequence_gc_content', suffix, '.', plot_device), width=10, height=3.5, units='in', plot=p)
 
 
 # Per sequence length distribution
@@ -148,7 +149,7 @@ if (readType=='pairedEnd') {
     theme( axis.title.x =element_text(size=12), axis.title.y =element_text(size=12), legend.key.height=unit(.8,"line"), 
            axis.text.x=element_text(size=7,angle=90), axis.text.y=element_text(size=12))  + ylab("") + xlab('length')
 }
-ggsave(filename=paste0(outdir,'/sequence_length_distribution', suffix, '.png'), width=10, height=3.5, units='in', plot=p)
+ggsave(filename=paste0(outdir,'/sequence_length_distribution', suffix, '.', plot_device), width=10, height=3.5, units='in', plot=p)
 
 
 # Per duplication levels
@@ -195,5 +196,5 @@ if (readType=='pairedEnd') {
     theme(axis.text.x = element_text(size = 9, angle=90), legend.key.height=unit(.8,"line"),
           axis.title.y=element_blank())  + xlab("Number of copies per read") + scale_shape_manual(values=1:length(unique(d$Sample)))
 }
-ggsave(filename=paste0(outdir,'/sequence_dup_levels', suffix, '.png'), width=10, height=3.5, units='in', plot=p)
+ggsave(filename=paste0(outdir,'/sequence_dup_levels', suffix, '.', plot_device), width=10, height=3.5, units='in', plot=p)
 

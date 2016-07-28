@@ -81,7 +81,7 @@ QC and trimming
 Run the following commands:
   $ qcReads.py --in_dir rawReads/ --out_dir rawReads/
 
-  $ fastqc_tables_and_plots.py --in_dir rawReads/ --out_dir rawReads/ --suffix_name _raw --out_dir_report Report/figure/rawQC --readType pairedEnd 
+  $ fastqc_tables_and_plots.py --in_dir rawReads/ --out_dir rawReads/ --suffix_name _raw --out_dir_report Report/figure/rawQC --readType pairedEnd --plot_device png 
 
   $ trimmingReads.py --in_dir rawReads/ --out_dir trimmedReads/ --ncores 9
 

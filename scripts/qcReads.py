@@ -24,6 +24,7 @@ def qc_check(i):
         os.system("fastqc " + in_dir + "/" + i + "/" + i + "*_R2*.fastq" + gz + " --outdir=" + out_dir + "/" + i + " --nogroup --extract")
 
 ####################
+__version__ = 'v02'
 
 if __name__ == '__main__':
 
@@ -33,7 +34,8 @@ if __name__ == '__main__':
      - It also returns a table and a plot with the number of reads for each sample, the output by default is Report/figure/data """
 
     # Parser
-    parser = argparse.ArgumentParser(description = 'Quality control of data using FastQC')
+    parser = argparse.ArgumentParser(prog='qcReads.py', description = 'Quality control of data using FastQC')
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s-'+__version__)
     parser.add_argument('--analysis_info_file', help='Text file with details of the analysis. Default=analysis_info.txt', default='analysis_info.txt')
     parser.add_argument('--in_dir', help='Path to folder containing fastq files. Default=rawReads/', default='rawReads/')
     parser.add_argument('--out_dir', help='Path to out put folder. Default=rawReads/', default='rawReads/')

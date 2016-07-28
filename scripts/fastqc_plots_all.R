@@ -10,6 +10,7 @@ sample_name=commandArgs(TRUE)[2]
 readType=commandArgs(TRUE)[3] # provide full path!!!
 outdir=commandArgs(TRUE)[4]
 suffix=commandArgs(TRUE)[5]
+plot_device=commandArgs(TRUE)[6]
 if (is.na(suffix)){
   suffix=''
 }
@@ -60,7 +61,7 @@ generate_qc_plot=function(files,sample_name,type){
         annotate("rect", xmin=-Inf, xmax=Inf, ymin=28, ymax=Inf, alpha=0.1, fill="green") + 
         xlab("Position of base in read")
     }
-    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_per_base_sequence_qual.png'), plot=p, height=3.5, width=10)
+    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_per_base_sequence_qual.', plot_device), plot=p, height=3.5, width=10)
   } else if (type=='per_base_sequence_content.txt'){
     colnames(dat_r1)=c('Base','%G','%A','%T','%C')
     dat_r1$Base <- factor(dat_r1$Base, as.character(dat_r1$Base))
@@ -82,7 +83,7 @@ generate_qc_plot=function(files,sample_name,type){
                                      legend.position="top", plot.title = element_text(lineheight=.5, face="bold", vjust=-1.5)) + 
         xlab("Position in read") +  ylim(0, 100) 
     }
-    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_per_base_sequence_content.png'), plot=p, height=3.5, width=10)
+    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_per_base_sequence_content.', plot_device), plot=p, height=3.5, width=10)
   } else if (type=='kmer_content.txt'){
     colnames(dat_r1)=c('Sequence','Content','PValue', 'Obs_Exp_Max', 'Max_Obs_Exp_Position' )
     nbases=76
@@ -133,7 +134,7 @@ generate_qc_plot=function(files,sample_name,type){
                                      plot.title = element_text(lineheight=.8, face="bold", vjust=-1.5))  + 
         xlab("Position in read")
     } 
-    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_kmer_content.png'), plot=p, height=3.5, width=10)
+    ggsave(filename=paste0(outdir,'/',sample_temp, suffix, '_kmer_content.', plot_device), plot=p, height=3.5, width=10)
   }
 }
 
