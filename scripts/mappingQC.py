@@ -15,6 +15,8 @@ sys.path.insert(0,'/usr/local/bin/')
 import functions
 import argparse
 
+__version__ = 'v02'
+
 def junctions(i):
     os.system("python /usr/local/miniconda/bin/junction_annotation.py -i " + 
         in_dir + "/" + i +"Aligned.sortedByCoord.out.bam -o " + 
@@ -43,18 +45,18 @@ def pct(i):
 #########################
 
 if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser(description = 'Quality control of mapped data')
+    parser = argparse.ArgumentParser(prog='mappingQC.py',description = 'Quality control of mapped data')
+    parser.add_argument('-v','--version',action='version',version='%(prog)s-'+__version__)
     parser.add_argument('--analysis_info_file', help='Text file with details of the analysis. Default=analysis_info.txt', default='analysis_info.txt')
     parser.add_argument('--in_dir', help='Path to folder containing fastq files. Default=alignedReads/', default='alignedReads/')
     parser.add_argument('--out_dir', help='Path to out put folder. Default=alignedReads/QC/', default='alignedReads/QC/')
     parser.add_argument('--out_dir_report', help='Path to out put folder. Default=Report/figure/mappingQC/', default='Report/figure/mappingQC/')
     parser.add_argument('--sample_names_file', help='Text file with sample names. Default=sample_names_info.txt', default='sample_names.txt')
+    parser.add_argument('--run', help='Choose a section of the pipeline to run. Possible options: mapping_summary; gene_body_coverage; picard_tools; all. Default = all')
     parser.add_argument('--ncores', help='Number of cores to use. Default=8', default='8')
     args=parser.parse_args()
 
     params_file=args.analysis_info_file
-    #path=functions.read_analysis_info_file(params_file)['Working directory']
     path=os.getcwd()
     refGenome=functions.read_analysis_info_file(params_file)['Reference Genome']
     bedFile_10k=functions.read_analysis_info_file(params_file)['BedFile10K']
@@ -80,15 +82,18 @@ if __name__ == '__main__':
 
     # Detect if files are gz
     gz = functions.check_gz(in_dir)
-
-    os.system("mapping_summary.R " + in_dir + '/ ' + out_dir + '/' )
-    os.system("mapping_summary.R " + in_dir + '/ ' + out_dir_report + '/' )
+    
+    # Mapping summary
+    if args.run == 'all' or args.run == 'mapping_summary':
+        os.system("mapping_summary.R " + in_dir + '/ ' + out_dir + '/' )
+        os.system("mapping_summary.R " + in_dir + '/ ' + out_dir_report + '/' )
 
     # Gene body coverage
-    os.system("ls " + in_dir + "/*Aligned.sortedByCoord.out.bam > tempbamfiles.txt")
-    os.system("/usr/local/minicondaexport/bin/geneBody_coverage.py -r " + bedFile_10k + " -i tempbamfiles.txt -o " + out_dir + "/10KGenes")
-    os.system("rm tempbamfiles.txt")
-    os.system('cp ' + out_dir + '/10KGenes.geneBodyCoverage.curves.pdf ' + out_dir_report + '/10KGenes_geneBodyCoverage_curves.pdf')
+    if args.run == 'all' or args.run == 'gene_body_coverage':
+        os.system("ls " + in_dir + "/*Aligned.sortedByCoord.out.bam > tempbamfiles.txt")
+        os.system("/usr/local/minicondaexport/bin/geneBody_coverage.py -r " + bedFile_10k + " -i tempbamfiles.txt -o " + out_dir + "/10KGenes")
+        os.system("rm tempbamfiles.txt")
+        os.system('cp ' + out_dir + '/10KGenes.geneBodyCoverage.curves.pdf ' + out_dir_report + '/10KGenes_geneBodyCoverage_curves.pdf')
 
     # Junction QC
     #Parallel(n_jobs=ncores)(delayed(junctions)(i) for i in sampleNames)
@@ -97,6 +102,7 @@ if __name__ == '__main__':
     #os.system('cp ' + out_dir + '/junctionSaturationAll.pdf ' + out_dir_report)
 
     # Picard tools
-    Parallel(n_jobs=ncores)(delayed(picard_collect_metrics)(i) for i in sampleNames)
-    Parallel(n_jobs=ncores)(delayed(pct)(i) for i in sampleNames)
-    os.system('Rscript /usr/local/bin/read_distribution_genomic_context.R ' + out_dir + ' ' + out_dir_report )
+    if args.run == 'all' or args.run == 'picard_tools':
+        Parallel(n_jobs=ncores)(delayed(picard_collect_metrics)(i) for i in sampleNames)
+        Parallel(n_jobs=ncores)(delayed(pct)(i) for i in sampleNames)
+        os.system('Rscript /usr/local/bin/read_distribution_genomic_context.R ' + out_dir + ' ' + out_dir_report )

@@ -81,24 +81,25 @@ QC and trimming
 Run the following commands:
   $ qcReads.py --in_dir rawReads/ --out_dir rawReads/
 
-  $ fastqc_tables_and_plots.py --in_dir rawReads/ --out_dir rawReads/ --suffix_name _raw --out_dir_report Report/figure/rawQC --readType pairedEnd  
+  $ fastqc_tables_and_plots.py --in_dir rawReads/ --out_dir rawReads/ --suffix_name _raw --out_dir_report Report/figure/rawQC --readType pairedEnd --plot_device png 
 
   $ trimmingReads.py --in_dir rawReads/ --out_dir trimmedReads/ --ncores 9
 
-  $ fastqc_tables_and_plots.py --in_dir trimmedReads/ --out_dir trimmedReads/ --suffix_name _trimmed --out_dir_report Report/figure/trimmedQC --readType pairedEnd
+  $ fastqc_tables_and_plots.py --in_dir trimmedReads/ --out_dir trimmedReads/ --suffix_name _trimmed --out_dir_report Report/figure/trimmedQC --readType pairedEnd --plot_device png
 
 Mapping and mapping QC
 ----------------------
 Run the following commands:
-  $ mappingReads.py --in_dir trimmedReads/ --out_dir alignedReads/
+  $ mappingReads.py --in_dir trimmedReads/ --out_dir alignedReads/ 
 **We have observed that the mapping takes a long time when not run locally. You can run STAR locally by adding the argument --temp_dir <whatever_local_dir>. This will create a temp local folder as specifyied and run STAR. When the mapping is finished it will automatically move the results to the original working directory.
 
-  $ mappingQC.py --in_dir alignedReads/ --out_dir alignedReads/QC/ 
+For the mapping QC, you can choose which section of the script to run with the '--run' argument. Possible options are: all, mapping_summary, gene_body_coverage, and picard_tools. 
+  $ mappingQC.py --in_dir alignedReads/ --out_dir alignedReads/QC/ --run all 
 
 Counting Reads
 --------------
 Run the following commands:
-  $ countingReads.py --in_dir countedReads/ --out_dir countedReads/
+  $ countingReads.py --in_dir alignedReads/ --out_dir countedReads/
 
 
 Differential expression
@@ -113,7 +114,7 @@ There are 4 files needed:
 4. comparisons.csv
 
 To create these files run:
-  $ differential_expression.py --deseq2_arguments deseq2_arguments.txt --edger_arguments edger_arguments.txt --sample_info sample_info.txt --comparisons comparisons.csv
+  $ differential_expression.py --deseq2_arguments deseq2_arguments.txt --edger_arguments edger_arguments.txt --sample_info sample_info.csv --comparisons comparisons.csv
 
 Then, fill the files with the corresponding information. 
 

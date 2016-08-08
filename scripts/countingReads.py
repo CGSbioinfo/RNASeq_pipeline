@@ -15,6 +15,8 @@ sys.path.insert(0,'/usr/local/bin/')
 import functions
 import argparse
 
+__version__ = 'v02'
+
 def counting(i):
     os.system('samtools sort -n --output-fmt sam ' + in_dir + '/' + i + 'Aligned.sortedByCoord.out.bam | htseq-count -a 10 -m union -s ' + strand_htseq + ' - ' + gtfFile + ' > ' + out_dir + '/' + i + '_count.txt')
 
@@ -22,8 +24,8 @@ def counting(i):
 #########################
 
 if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser(description = 'Counting Reads')
+    parser = argparse.ArgumentParser(prog='countingReads.py',description = 'Counting Reads')
+    parser.add_argument('-v','--version', action='version', version='%(prog)s-'+__version__)
     parser.add_argument('--analysis_info_file', help='Text file with details of the analysis. Default=analysis_info.txt', default='analysis_info.txt')
     parser.add_argument('--in_dir', help='Path to folder containing fastq files. Default=alignedReads/', default='alignedReads/')
     parser.add_argument('--out_dir', help='Path to output folder. Default=countedReads/', default='countedReads/')

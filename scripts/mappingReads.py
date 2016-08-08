@@ -14,6 +14,8 @@ sys.path.insert(0,'/usr/local/bin/')
 import functions
 import argparse
 
+__version__ = 'v02'
+
 def mapping(i):
     trimmedReads = os.listdir(in_dir)
     trimmedReads = [trimmedReads[y] for y, x in enumerate(trimmedReads) if re.findall(i, x)]
@@ -46,8 +48,8 @@ def sortByName(i):
 
 
 if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser(description = 'Mapping reads with STAR')
+    parser = argparse.ArgumentParser(prog='mappingReads.py',description = 'Mapping reads with STAR')
+    parser.add_argument('-v','--version', action='version', version='%(prog)s-'+__version__)
     parser.add_argument('--analysis_info_file', help='Text file with details of the analysis. Default=analysis_info.txt', default='analysis_info.txt')
     parser.add_argument('--in_dir', help='Path to folder containing fastq files. Default=trimmedReads/', default='trimmedReads/')
     parser.add_argument('--out_dir', help='Path to out put folder. Default=alignedReads/', default='alignedReads/')

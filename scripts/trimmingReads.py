@@ -28,10 +28,11 @@ def trimming(i):
 
 #########################
 
+__version__='v02'
 
 if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser(description = 'QC and adapter trimming using Trim Galore')
+    parser = argparse.ArgumentParser(prog='trimmingReads.py',description = 'QC and adapter trimming using Trim Galore')
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s-'+__version__)
     parser.add_argument('--analysis_info_file', help='Text file with details of the analysis. Default=analysis_info.txt', default='analysis_info.txt')
     parser.add_argument('--in_dir', help='Path to folder containing fastq files. Default=rawReads/', default='rawReads/')
     parser.add_argument('--out_dir', help='Path to out put folder. Default=trimmedReads/', default='trimmedReads/')
