@@ -174,3 +174,40 @@ else #smooth is not true
 } else {pairs(x,diag.panel=panel.hist, cex.labels = 1.3) }
 } #end of else (smooth)
 } #end of function
+
+############## PCA modified
+plotPCA_3pcs=function (object, ...) 
+{
+    .local <- function (object, intgroup = "condition", ntop = 500, 
+        returnData = TRUE) 
+    {
+        if (class(object)=="DESeqTransform"){
+	object<-assay(object)	
+	}
+        rv <- rowVars(object)
+        select <- order(rv, decreasing = TRUE)[seq_len(min(ntop, 
+            length(rv)))]
+        pca <- prcomp(t(object[select, ]))
+        percentVar <- pca$sdev^2/sum(pca$sdev^2)
+        d <- data.frame(PC1 = pca$x[, 1], PC2 = pca$x[, 2], PC3 = pca$x[, 3], name = colnames(object))
+        if (returnData) {
+            attr(d, "percentVar") <- percentVar[1:3]
+            return(d)
+        }
+    }
+    .local(object, ...)
+}
+
+################# clean y
+cleanY = function(y, mod1, svs) {
+  X = cbind(mod1, svs)
+  Hat = solve(t(X) %*% X) %*% t(X)
+  beta = (Hat %*% t(y))
+  rm(Hat)
+  gc()
+  P = ncol(mod1)
+  #dat_transformed=dat0 - t(as.matrix(X[,-c(1:P)]) %*% beta[-c(1:P),])
+  return(y - t(as.matrix(X[,-c(1:P)]) %*% beta[-c(1:P),]))
+}
+
+
